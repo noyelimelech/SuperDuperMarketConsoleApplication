@@ -12,8 +12,8 @@ public class SDMConsoleUI
 
         do {
             showMainMenu();
-            optionChoose = getValidOption(mainMenu.length + 1);
-            isFinished = executeOptionChoose(optionChoose, mainMenu.length + 1);
+            optionChoose = getValidOption(mainMenu.length);
+            isFinished = executeOptionChoose(optionChoose, mainMenu.length);
         }while(!isFinished);
     }
 
@@ -32,6 +32,12 @@ public class SDMConsoleUI
             case 3:
                 showAllItems();
                 break;
+            case 4:
+                //TODO call method on engine does a new order
+                break;
+            case 5:
+                //TODO show all orders
+                break;
         }
 
         return false;
@@ -41,17 +47,24 @@ public class SDMConsoleUI
     }
 
     private void showAllStores() {
+        //TODO
     }
 
     private void loadNewXML() {
         Scanner xmlFilePathScanner = new Scanner(System.in);
+        String filePath = xmlFilePathScanner.nextLine();
 
+        try {
+            //TODO add calling method of engine
+            //TODO exception handling and printing messages
+        }
+        catch(Exception ex) {}
 
     }
 
     private void showMainMenu() {
         for (int i = 0; i < mainMenu.length; i++) {
-            System.out.println(i+1 + mainMenu[i]);
+            System.out.println(i+1 + "." + mainMenu[i]);
         }
     }
 
@@ -63,7 +76,7 @@ public class SDMConsoleUI
 
         do {
             try{
-                optionChoose =  scannerFromConsole.nextInt();
+                optionChoose =  Integer.parseInt(scannerFromConsole.nextLine());
                 if(optionChoose >= 1 && optionChoose <= optionMaxBound) {
                     isValidOption = true;
                 }
