@@ -8,4 +8,9 @@ public class Location
     private final int maxBorder=50;
 
     private Point location;
+
+    public Location(Point p)
+    {
+        this.location = p;
+    }
 }
