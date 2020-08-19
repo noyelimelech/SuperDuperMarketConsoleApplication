@@ -1,3 +1,5 @@
+package SDM;
+
 import java.awt.*;
 
 public class Location
