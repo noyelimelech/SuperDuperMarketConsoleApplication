@@ -1,3 +1,8 @@
+package SDM;
+
+import SDM.Costumer;
+import SDM.Item;
+
 import java.util.HashMap;
 import java.util.Map;
 

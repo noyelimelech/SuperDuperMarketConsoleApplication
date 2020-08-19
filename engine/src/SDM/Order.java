@@ -1,3 +1,7 @@
+package SDM;
+
+import SDM.Costumer;
+
 import java.util.Date;
 import java.util.List;
 

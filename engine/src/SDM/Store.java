@@ -1,3 +1,8 @@
+package SDM;
+
+import SDM.Location;
+import SDM.Order;
+
 import java.util.*;
 
 public class Store
@@ -6,7 +11,7 @@ public class Store
     private String name;
     private int deliveryPPK;
     private Location location;
-    private Map<Integer,StoreItem> itemsThatSellInThisStore;
+    private Map<Integer, StoreItem> itemsThatSellInThisStore;
     private List<Order> orders=new LinkedList<Order>();
 
 }
