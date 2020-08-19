@@ -1,3 +1,5 @@
+package SDM;
+
 import java.util.Map;
 
 public class Item
@@ -10,6 +12,6 @@ public class Item
     private int id;
     private String name;
     private ItemType type;
-    private Map<Integer,Store> storesSellThisItem;
+    private Map<Integer, Store> storesSellThisItem;
 
 }
