@@ -41,7 +41,8 @@ import javax.xml.bind.annotation.XmlType;
     "sdmSell"
 })
 @XmlRootElement(name = "SDM-prices")
-public class SDMPrices {
+public class SDMPrices
+{
 
     @XmlElement(name = "SDM-sell", required = true)
     protected List<SDMSell> sdmSell;
