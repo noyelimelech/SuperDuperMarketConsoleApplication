@@ -54,7 +54,7 @@ public class XMLHandlerBaseOnSchema
         for (SDMItem sdmItem:sdmItems)
         {
             item=new Item(sdmItem.getId(),sdmItem.getName());
-            item.checkAndUpdateItemType(sdmItem.getPurchaseCategory());
+            item.checkAndUpdateItemType(sdmItem.getPurchaseCategory());//צריך לבדוק אם לא נכון הטייפ ולזרוק אקספשיין
             this.items.put(item.getId(),item);
         }
     }
@@ -69,6 +69,7 @@ public class XMLHandlerBaseOnSchema
         for (SDMStore sdmSt:sdmStores)
         {
             st=new Store();
+
             st.setId(sdmSt.getId());
             st.setName(sdmSt.getName());
             st.setDeliveryPPK(sdmSt.getDeliveryPpk());
