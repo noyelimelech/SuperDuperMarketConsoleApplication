@@ -111,7 +111,7 @@ public class XMLHandlerBaseOnSchema
             boolean flagIsItLegalLocation= checkIfIsLegalLocation(sdmSt.getLocation().getX(),sdmSt.getLocation().getY());
             if(!flagIsItLegalLocation)
             {
-                throw (new LocationIsOutOfBorderException(Location.minBorder,Location.maxBorder));
+                throw (new LocationIsOutOfBorderException(Location.minBorder,Location.maxBorder, "Store" , sdmSt.getId() ));
             }
             
             st.setLocation(new Location(new Point(sdmSt.getLocation().getX(),sdmSt.getLocation().getY())));
