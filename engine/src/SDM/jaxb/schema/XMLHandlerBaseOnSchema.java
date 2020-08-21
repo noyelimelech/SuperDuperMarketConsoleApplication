@@ -40,7 +40,7 @@ public class XMLHandlerBaseOnSchema
 
         if(inpPath.length()-4!=(inpPath.toLowerCase().lastIndexOf(".xml")))
         {
-            throw (new FileNotEndWithXMLException());
+            throw (new FileNotEndWithXMLException(inpPath.substring(inpPath.length()-3)));
         }
 
         InputStream inputStream = new FileInputStream(new File(inpPath));
