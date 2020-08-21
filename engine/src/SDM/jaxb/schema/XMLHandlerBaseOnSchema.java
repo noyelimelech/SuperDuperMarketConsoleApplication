@@ -27,17 +27,18 @@ public class XMLHandlerBaseOnSchema
 
     private static String JAXB_XML_PACKAGE_NAME="SDM.jaxb.schema.generated";
 
-    public SuperDuperMarketDescriptor fromStringPathToDescriptor(String inpPath) throws FileNotFoundException, JAXBException, FileNotEndWithXMLException {
+    public SuperDuperMarketDescriptor fromStringPathToDescriptor(String inpPath) throws FileNotFoundException, JAXBException, FileNotEndWithXMLException
+    {
+
         if(inpPath.length()-4!=(inpPath.toLowerCase().lastIndexOf(".xml")))
         {
             throw (new FileNotEndWithXMLException());
         }
-        else 
-        {
-            InputStream inputStream = new FileInputStream(new File(inpPath));
-            SuperDuperMarketDescriptor sdmObj = deserialize(inputStream);
-            return (sdmObj);
-        }
+
+        InputStream inputStream = new FileInputStream(new File(inpPath));
+        SuperDuperMarketDescriptor sdmObj = deserialize(inputStream);
+        return (sdmObj);
+
     }
 
     //deserialize from input to SuperDuperMarket
@@ -59,10 +60,8 @@ public class XMLHandlerBaseOnSchema
         {
             if(this.items.containsKey(sdmItem.getId()))
             {
-                throw (new DuplicateItemException());
+                throw (new DuplicateItemException(sdmItem.getId()));
             }
-
-
             item=new Item(sdmItem.getId(),sdmItem.getName());
             item.checkAndUpdateItemType(sdmItem.getPurchaseCategory());//צריך לבדוק אם לא נכון הטייפ ולזרוק אקספשיין
             this.items.put(item.getId(),item);
@@ -83,7 +82,7 @@ public class XMLHandlerBaseOnSchema
             {
                 if(s.getId()==sdmSt.getId())
                 {
-                    throw (new DuplicateStoreIDException());
+                    throw (new DuplicateStoreIDException(sdmSt.getId()));
                 }
             }
 
@@ -95,7 +94,7 @@ public class XMLHandlerBaseOnSchema
             boolean flagIsItLegalLocation= checkIfIsLegalLocation(sdmSt.getLocation().getX(),sdmSt.getLocation().getY());
             if(!flagIsItLegalLocation)
             {
-                throw (new LocationIsOutOfBorderException());
+                throw (new LocationIsOutOfBorderException(Location.minBorder,Location.maxBorder));
             }
             
             st.setLocation(new Location(new Point(sdmSt.getLocation().getX(),sdmSt.getLocation().getY())));
@@ -108,7 +107,7 @@ public class XMLHandlerBaseOnSchema
 
     public boolean checkIfIsLegalLocation(int x, int y)
     {
-        return((x>=1&&x<=50) && (y>=1&&y<=50));
+        return((x>=Location.minBorder&&x<=Location.minBorder) && (y>=Location.minBorder&&y<=Location.maxBorder));
     }
 
     //convert sdmPrices to storeItem
@@ -122,7 +121,7 @@ public class XMLHandlerBaseOnSchema
         {
             if(retMapStoreItems.containsKey(sdmSell.getItemId()))
             {
-                throw (new DuplicateStoreItemException());
+                throw (new DuplicateStoreItemException(sdmSell.getItemId()));
             }
             
             sti=new StoreItem();
