@@ -1,19 +1,17 @@
 package SDM.Exception;
 
-import SDM.Locatable;
-
 public class LocationIsOutOfBorderException extends Exception
 {
     private int minBorder;
     private int maxBorder;
-    private Locatable missLocatedObject;
+    private String locatableType;
     private int id;
 
-    public LocationIsOutOfBorderException(int minBorder, int maxBorder, Locatable missLocatedObject, int id)
+    public LocationIsOutOfBorderException(int minBorder, int maxBorder, String locatableType, int id)
     {
         this.minBorder=minBorder;
         this.maxBorder=maxBorder;
-        this.missLocatedObject = missLocatedObject;
+        this.locatableType = locatableType;
         this.id = id;
     }
 
@@ -28,8 +26,8 @@ public class LocationIsOutOfBorderException extends Exception
         return maxBorder;
     }
 
-    public Locatable getMissLocatedObject() {
-        return missLocatedObject;
+    public String getLocatableType() {
+        return locatableType;
     }
 
     public int getId() {
