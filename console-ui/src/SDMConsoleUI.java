@@ -1,5 +1,8 @@
 import SDM.*;
+import SDM.Exception.FileNotEndWithXMLException;
+import SDM.Exception.LocationIsOutOfBorderException;
 
+import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -9,6 +12,10 @@ public class SDMConsoleUI
 {
     private SDMEngine engine;
     private final String[] mainMenu = {"Load new XML file.","Show all stores information","Show all items information.","Make new order.","Show all orders.","Exit."};
+
+    public SDMConsoleUI() {
+        this.engine = new SDMEngine();
+    }
 
     public void start() {
         boolean isFinished;
@@ -98,18 +105,23 @@ public class SDMConsoleUI
     private void showOrderInShowStoreChoice(Order order) {
     }
 
-    //TODO
     private void showStoreItem(StoreItem storeItem) {
-        //*showItemBasicData(storeItem.getItem());*//
-        System.out.println("d.price for : "); //TODO
-        System.out.println("e.Total sold: "/*storeItem.totalSold()*/);
+        showItemBasicData(storeItem.getItem());
+        if(storeItem.getItem().getType() == Item.ItemType.QUANTITY) {
+            System.out.println("d.price for 1 item is: " + storeItem.getPrice());
+        }
+        else {
+            System.out.println("d.price for 1kg is: " + storeItem.getPrice());
+        }
+
+        System.out.println("e.Total sold: "/*storeItem.totalSold()*/);     //TODO need method in storeItem that says how many of this item has been sold
     }
 
     void showItemBasicData(Item itemToShow) {
-        System.out.println("a.ID: "/*storeItem.getItem.getID()*/);
-        System.out.println("b.Name: "/*storeItem.getItem.getName()*/);
-        System.out.println("c.Purchase type: "/*storeItem.getItem.getItemType()*/);
-        //TODO need to make this enum to print his name when calling to toString, read about it..
+        System.out.println("a.ID: " + itemToShow.getId());
+        System.out.println("b.Name: " +  itemToShow.getName());
+        System.out.println("c.Purchase type: " + itemToShow.getType());//TODO need to make this enum to print his name when calling to toString, read about it..
+
     }
 
     private void loadNewXML() {
@@ -120,7 +132,20 @@ public class SDMConsoleUI
             //TODO add calling method of engine
             //TODO exception handling and printing messages
         }
-        catch(Exception ex) {}
+        catch (FileNotFoundException ex) {
+            System.out.println("ERROR: The file does not exist in the path given, please try again.");
+        }
+        catch(FileNotEndWithXMLException ex) {
+            System.out.println("ERROR: The file you given is not an XML file, please make sure it ends with .xml and try again");
+        }
+        catch(LocationIsOutOfBorderException ex) {
+            System.out.println("ERROR: The object of type " +  ex.getMissLocatedObject().getClass().getSimpleName() +
+                    "with id of: " + ex.getId() + " is located out of allowed borders which are between "
+                    + ex.getMinBorder() + "to " + ex.getMaxBorder() + ".Please fix this ");
+        }
+        catch(Exception ex) {
+            System.out.println("ERROR: Unknown error has happen, the error message is: " + ex.getMessage());
+        }
 
     }
 

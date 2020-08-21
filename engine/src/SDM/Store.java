@@ -5,7 +5,7 @@ import SDM.Order;
 
 import java.util.*;
 
-public class Store
+public class Store implements Locatable
 {
     private int id;
     private String name;
