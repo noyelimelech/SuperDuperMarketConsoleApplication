@@ -2,6 +2,7 @@ package SDM;
 
 import SDM.Costumer;
 import SDM.Item;
+import SDM.jaxb.schema.XMLHandlerBaseOnSchema;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,5 +23,19 @@ public class SDMEngine
        return new ArrayList<>(allItems.values());
    }
 
+   public void updateAllStoresAndAllItems()
+   {
+       XMLHandlerBaseOnSchema xmlHandler=new XMLHandlerBaseOnSchema();
 
+       this.allItems=xmlHandler.getItems();
+
+       //convert List of store to Map of<int id,Store)
+       for(Store st: xmlHandler.getStores() )
+       {
+           this.allStores.put(st.getId(),st);
+       }
+       //List<Item> list;
+       //Map<Key,Item> map = new HashMap<Key,Item>();
+       //for (Item i : list) map.put(i.getKey(),i);
+   }
 }

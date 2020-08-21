@@ -25,9 +25,17 @@ public class XMLHandlerBaseOnSchema
     private List<Store> stores = null;
     private Map<Integer,Item> items =null;
 
-    private static String JAXB_XML_PACKAGE_NAME="SDM.jaxb.schema.generated";
+    private String JAXB_XML_PACKAGE_NAME="SDM.jaxb.schema.generated";
 
-    public SuperDuperMarketDescriptor fromStringPathToDescriptor(String inpPath) throws FileNotFoundException, JAXBException, FileNotEndWithXMLException
+
+    public void updateStoresAndItems(String stPath) throws FileNotFoundException, JAXBException, FileNotEndWithXMLException, DuplicateItemException, LocationIsOutOfBorderException, DuplicateStoreIDException, DuplicateStoreItemException
+    {
+        SuperDuperMarketDescriptor sdmDescriptor=this.fromStringPathToDescriptor(stPath);
+        parseFromSDMItemToItem(sdmDescriptor);
+        parseFromSDMStoresToStores(sdmDescriptor);
+    }
+
+    private SuperDuperMarketDescriptor fromStringPathToDescriptor(String inpPath) throws FileNotFoundException, JAXBException, FileNotEndWithXMLException
     {
 
         if(inpPath.length()-4!=(inpPath.toLowerCase().lastIndexOf(".xml")))
@@ -42,15 +50,24 @@ public class XMLHandlerBaseOnSchema
     }
 
     //deserialize from input to SuperDuperMarket
-    private static SuperDuperMarketDescriptor deserialize(InputStream in)throws JAXBException
+    private SuperDuperMarketDescriptor deserialize(InputStream in)throws JAXBException
     {
         JAXBContext jc= JAXBContext.newInstance(JAXB_XML_PACKAGE_NAME);
         Unmarshaller u=jc.createUnmarshaller();
         return (SuperDuperMarketDescriptor) u.unmarshal(in);
     }
 
+    public List<Store> getStores()
+    {
+        return stores;
+    }
 
-    public void parseFromSDMItemToItem(SuperDuperMarketDescriptor sdmObj) throws DuplicateItemException
+    public Map<Integer, Item> getItems()
+    {
+        return items;
+    }
+
+    private void parseFromSDMItemToItem(SuperDuperMarketDescriptor sdmObj) throws DuplicateItemException
     {
         List<SDMItem> sdmItems= sdmObj.getSDMItems().getSDMItem();
         this.items=new HashMap<>();
@@ -69,7 +86,7 @@ public class XMLHandlerBaseOnSchema
     }
 
 
-    public void parseFromSDMStoresToStores(SuperDuperMarketDescriptor sdmObj) throws DuplicateStoreIDException, DuplicateStoreItemException, LocationIsOutOfBorderException {
+    private void parseFromSDMStoresToStores(SuperDuperMarketDescriptor sdmObj) throws DuplicateStoreIDException, DuplicateStoreItemException, LocationIsOutOfBorderException {
         List<SDMStore> sdmStores=  sdmObj.getSDMStores().getSDMStore();
         this.stores=new ArrayList<>();
         Store st;
@@ -102,10 +119,9 @@ public class XMLHandlerBaseOnSchema
             st.setItemsThatSellInThisStore(itemsInStStore);
             this.stores.add(st);
         }
-        
     }
 
-    public boolean checkIfIsLegalLocation(int x, int y)
+    private boolean checkIfIsLegalLocation(int x, int y)
     {
         return((x>=Location.minBorder&&x<=Location.minBorder) && (y>=Location.minBorder&&y<=Location.maxBorder));
     }
