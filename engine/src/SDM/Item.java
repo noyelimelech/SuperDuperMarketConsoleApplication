@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class Item
 {
-    private enum ItemType
+    public enum ItemType
     {
         QUANTITY,WIGHT
     }
