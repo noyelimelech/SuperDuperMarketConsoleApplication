@@ -1,9 +1,12 @@
 package SDM;
 
 import SDM.Costumer;
+import SDM.Exception.*;
 import SDM.Item;
 import SDM.jaxb.schema.XMLHandlerBaseOnSchema;
 
+import javax.xml.bind.JAXBException;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,9 +26,10 @@ public class SDMEngine
        return new ArrayList<>(allItems.values());
    }
 
-   public void updateAllStoresAndAllItems()
+   public void updateAllStoresAndAllItems(String stPath) throws DuplicateStoreIDException, DuplicateStoreItemException, LocationIsOutOfBorderException, JAXBException, FileNotFoundException, DuplicateItemException, FileNotEndWithXMLException
    {
        XMLHandlerBaseOnSchema xmlHandler=new XMLHandlerBaseOnSchema();
+       xmlHandler.updateStoresAndItems(stPath);
 
        this.allItems=xmlHandler.getItems();
 

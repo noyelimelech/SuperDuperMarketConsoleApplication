@@ -129,6 +129,8 @@ public class SDMConsoleUI
         String filePath = xmlFilePathScanner.nextLine();
 
         try {
+
+            engine.updateAllStoresAndAllItems(filePath);
             //TODO add calling method of engine
             //TODO exception handling and printing messages
         }
