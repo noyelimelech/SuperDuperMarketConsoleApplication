@@ -7,7 +7,7 @@ public class Item
 {
     public enum ItemType
     {
-        QUANTITY,WIGHT
+        QUANTITY,WEIGHT
     }
 
     private int id;

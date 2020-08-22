@@ -141,7 +141,7 @@ public class SDMConsoleUI
             System.out.println("ERROR: The file you given is not an XML file, please make sure it ends with .xml and try again");
         }
         catch(LocationIsOutOfBorderException ex) {
-            System.out.println("ERROR: The object of type " +  ex.getMissLocatedObject().getClass().getSimpleName() +
+            System.out.println("ERROR: The object of type " +  ex.getLocatableType()+
                     "with id of: " + ex.getId() + " is located out of allowed borders which are between "
                     + ex.getMinBorder() + "to " + ex.getMaxBorder() + ".Please fix this ");
         }
