@@ -25,6 +25,7 @@ public class SDMConsoleUI
             showMainMenu();
             optionChoose = getValidOption(mainMenu.length);
             isFinished = executeOptionChoose(optionChoose, mainMenu.length);
+            System.out.println("");
         }while(!isFinished);
     }
 
@@ -57,19 +58,28 @@ public class SDMConsoleUI
     private void showAllItems() {
         int i = 1;
         for(Item item : engine.getAllItems()) {
-            System.out.print(i + ".");
+            System.out.print("####ITEM NUMBER " + i + "####");
             showItem(item);
+            i++;
+            System.out.println("");
         }
     }
 
     private void showItem(Item item) {
+        showItemBasicData(item);
+        System.out.println("d.Number of stores sell this item: " + item.getStoresSellThisItem().size());
+        System.out.println("e.Average price of this item: " + item.getAveragePrice());
+        System.out.println("f.Total amount that has been sold: " + item.getTotalSold() + (item.getType() == Item.ItemType.QUANTITY ? " pieces" : " KG"));
+
     }
 
     private void showAllStores() {
         int i = 1;
         for(Store store : engine.getAllStores()) {
-            System.out.print(i + ".");
+            System.out.print("####STORE NUMBER " + i + "####");
             showStore(store);
+            i++;
+            System.out.println("");
         }
     }
 
@@ -126,13 +136,12 @@ public class SDMConsoleUI
 
     private void loadNewXML() {
         Scanner xmlFilePathScanner = new Scanner(System.in);
+        System.out.println("Please enter your XML file path: ");
         String filePath = xmlFilePathScanner.nextLine();
 
         try {
-
             engine.updateAllStoresAndAllItems(filePath);
-            //TODO add calling method of engine
-            //TODO exception handling and printing messages
+            System.out.println("XML file loaded successfully!");
         }
         catch (FileNotFoundException ex) {
             System.out.println("ERROR: The file does not exist in the path given, please try again.");
@@ -165,6 +174,7 @@ public class SDMConsoleUI
 
         do {
             try{
+                System.out.print("Please enter your choice: ");
                 optionChoose =  Integer.parseInt(scannerFromConsole.nextLine());
                 if(optionChoose >= 1 && optionChoose <= optionMaxBound) {
                     isValidOption = true;
@@ -179,7 +189,4 @@ public class SDMConsoleUI
 
         return optionChoose;
     }
-
-
-
 }
