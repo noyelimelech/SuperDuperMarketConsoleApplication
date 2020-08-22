@@ -118,13 +118,13 @@ public class SDMConsoleUI
     private void showStoreItem(StoreItem storeItem) {
         showItemBasicData(storeItem.getItem(),"\t", 'a');
         if(storeItem.getItem().getType() == Item.ItemType.QUANTITY) {
-            System.out.println("d.price for 1 item is: " + storeItem.getPrice());
+            System.out.println('\t' + "d.price for 1 item is: " + storeItem.getPrice());
         }
         else {
-            System.out.println("d.price for 1kg is: " + storeItem.getPrice());
+            System.out.println('\t' + "d.price for 1kg is: " + storeItem.getPrice());
         }
 
-        System.out.println("e.Total sold: "/*storeItem.totalSold()*/);     //TODO need method in storeItem that says how many of this item has been sold
+        System.out.println('\t' + "e.Total sold: "/*storeItem.totalSold()*/);     //TODO need method in storeItem that says how many of this item has been sold
     }
 
     void showItemBasicData(Item itemToShow, String linePrefix, char countingPrefix) {
