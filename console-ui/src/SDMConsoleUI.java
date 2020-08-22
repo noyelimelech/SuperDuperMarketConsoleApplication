@@ -75,6 +75,7 @@ public class SDMConsoleUI
 
     private void showAllStores() {
         int i = 1;
+        System.out.println("");
         for(Store store : engine.getAllStores()) {
             System.out.println("####STORE NUMBER " + i + "####");
             showStore(store);

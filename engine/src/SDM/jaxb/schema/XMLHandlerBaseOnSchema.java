@@ -108,7 +108,7 @@ public class XMLHandlerBaseOnSchema
             st.setName(sdmSt.getName());
             st.setDeliveryPPK(sdmSt.getDeliveryPpk());
             
-            boolean flagIsItLegalLocation= checkIfIsLegalLocation(sdmSt.getLocation().getX(),sdmSt.getLocation().getY());
+            boolean flagIsItLegalLocation=Location.checkIfIsLegalLocation(sdmSt.getLocation().getX(),sdmSt.getLocation().getY());
             if(!flagIsItLegalLocation)
             {
                 throw (new LocationIsOutOfBorderException(Location.minBorder,Location.maxBorder, "Store" , sdmSt.getId() ));
@@ -120,11 +120,13 @@ public class XMLHandlerBaseOnSchema
             this.stores.add(st);
         }
     }
-
+/*
     private boolean checkIfIsLegalLocation(int x, int y)
     {
         return((x>=Location.minBorder&&x<=Location.maxBorder) && (y>=Location.minBorder&&y<=Location.maxBorder));
     }
+
+ */
 
     //convert sdmPrices to storeItem
     private Map<Integer, StoreItem> getStorItemesFromsdmPrices(SDMStore sdmSt, Store st) throws DuplicateStoreItemException
