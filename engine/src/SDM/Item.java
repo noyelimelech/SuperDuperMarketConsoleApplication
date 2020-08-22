@@ -64,5 +64,19 @@ public class Item
         ///לא ממש הבנתי מה קורה אם הסטרינג הוא לא אינם
     }
 
+    public double getAveragePrice() {
+        double avgPrice = 0;
+        for (Store store : storesSellThisItem.values()) {
+            avgPrice += store.getItemsThatSellInThisStore().get(this.id).getPrice();
+        }
+        avgPrice /= storesSellThisItem.size();
+
+        return avgPrice;
+    }
+
+    public double getTotalSold() {
+        return -1; //TODO
+    }
+
 }
 

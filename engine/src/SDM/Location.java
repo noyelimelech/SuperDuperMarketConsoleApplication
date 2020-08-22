@@ -13,4 +13,13 @@ public class Location
     {
         this.location = p;
     }
+
+
+
+    public static boolean checkIfIsLegalLocation(int x, int y)
+    {
+        return((x>=Location.minBorder&&x<=Location.maxBorder) && (y>=Location.minBorder&&y<=Location.maxBorder));
+    }
+
 }
+

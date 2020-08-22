@@ -40,7 +40,7 @@ public class XMLHandlerBaseOnSchema
 
         if(inpPath.length()-4!=(inpPath.toLowerCase().lastIndexOf(".xml")))
         {
-            throw (new FileNotEndWithXMLException());
+            throw (new FileNotEndWithXMLException(inpPath.substring(inpPath.length()-3)));
         }
 
         InputStream inputStream = new FileInputStream(new File(inpPath));
@@ -108,7 +108,7 @@ public class XMLHandlerBaseOnSchema
             st.setName(sdmSt.getName());
             st.setDeliveryPPK(sdmSt.getDeliveryPpk());
             
-            boolean flagIsItLegalLocation= checkIfIsLegalLocation(sdmSt.getLocation().getX(),sdmSt.getLocation().getY());
+            boolean flagIsItLegalLocation=Location.checkIfIsLegalLocation(sdmSt.getLocation().getX(),sdmSt.getLocation().getY());
             if(!flagIsItLegalLocation)
             {
                 throw (new LocationIsOutOfBorderException(Location.minBorder,Location.maxBorder, "Store" , sdmSt.getId() ));
@@ -120,11 +120,13 @@ public class XMLHandlerBaseOnSchema
             this.stores.add(st);
         }
     }
-
+/*
     private boolean checkIfIsLegalLocation(int x, int y)
     {
         return((x>=Location.minBorder&&x<=Location.maxBorder) && (y>=Location.minBorder&&y<=Location.maxBorder));
     }
+
+ */
 
     //convert sdmPrices to storeItem
     private Map<Integer, StoreItem> getStorItemesFromsdmPrices(SDMStore sdmSt, Store st) throws DuplicateStoreItemException

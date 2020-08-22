@@ -25,6 +25,7 @@ public class SDMConsoleUI
             showMainMenu();
             optionChoose = getValidOption(mainMenu.length);
             isFinished = executeOptionChoose(optionChoose, mainMenu.length);
+            System.out.println("");
         }while(!isFinished);
     }
 
@@ -57,19 +58,29 @@ public class SDMConsoleUI
     private void showAllItems() {
         int i = 1;
         for(Item item : engine.getAllItems()) {
-            System.out.print(i + ".");
+            System.out.println("####ITEM NUMBER " + i + "####");
             showItem(item);
+            i++;
+            System.out.println("");
         }
     }
 
     private void showItem(Item item) {
+        showItemBasicData(item, "", '1');
+        System.out.println("4.Number of stores sell this item: " + item.getStoresSellThisItem().size());
+        System.out.println("5.Average price of this item: " + item.getAveragePrice());
+        System.out.println("6.Total amount that has been sold: " + item.getTotalSold() + (item.getType() == Item.ItemType.QUANTITY ? " pieces" : " KG"));
+
     }
 
     private void showAllStores() {
         int i = 1;
+        System.out.println("");
         for(Store store : engine.getAllStores()) {
-            System.out.print(i + ".");
+            System.out.println("####STORE NUMBER " + i + "####");
             showStore(store);
+            i++;
+            System.out.println("");
         }
     }
 
@@ -106,33 +117,32 @@ public class SDMConsoleUI
     }
 
     private void showStoreItem(StoreItem storeItem) {
-        showItemBasicData(storeItem.getItem());
+        showItemBasicData(storeItem.getItem(),"\t", 'a');
         if(storeItem.getItem().getType() == Item.ItemType.QUANTITY) {
-            System.out.println("d.price for 1 item is: " + storeItem.getPrice());
+            System.out.println('\t' + "d.price for 1 item is: " + storeItem.getPrice());
         }
         else {
-            System.out.println("d.price for 1kg is: " + storeItem.getPrice());
+            System.out.println('\t' + "d.price for 1kg is: " + storeItem.getPrice());
         }
 
-        System.out.println("e.Total sold: "/*storeItem.totalSold()*/);     //TODO need method in storeItem that says how many of this item has been sold
+        System.out.println('\t' + "e.Total sold: "/*storeItem.totalSold()*/);     //TODO need method in storeItem that says how many of this item has been sold
     }
 
-    void showItemBasicData(Item itemToShow) {
-        System.out.println("a.ID: " + itemToShow.getId());
-        System.out.println("b.Name: " +  itemToShow.getName());
-        System.out.println("c.Purchase type: " + itemToShow.getType());//TODO need to make this enum to print his name when calling to toString, read about it..
+    void showItemBasicData(Item itemToShow, String linePrefix, char countingPrefix) {
+        System.out.println(linePrefix + countingPrefix + ".ID: " + itemToShow.getId());
+        System.out.println(linePrefix + (++countingPrefix) + ".Name: " +  itemToShow.getName());
+        System.out.println(linePrefix + (++countingPrefix) + ".Purchase type: " + itemToShow.getType());//TODO need to make this enum to print his name when calling to toString, read about it..
 
     }
 
     private void loadNewXML() {
         Scanner xmlFilePathScanner = new Scanner(System.in);
+        System.out.println("Please enter your XML file path: ");
         String filePath = xmlFilePathScanner.nextLine();
 
         try {
-
             engine.updateAllStoresAndAllItems(filePath);
-            //TODO add calling method of engine
-            //TODO exception handling and printing messages
+            System.out.println("XML file loaded successfully!");
         }
         catch (FileNotFoundException ex) {
             System.out.println("ERROR: The file does not exist in the path given, please try again.");
@@ -165,6 +175,7 @@ public class SDMConsoleUI
 
         do {
             try{
+                System.out.print("Please enter your choice: ");
                 optionChoose =  Integer.parseInt(scannerFromConsole.nextLine());
                 if(optionChoose >= 1 && optionChoose <= optionMaxBound) {
                     isValidOption = true;
@@ -179,7 +190,4 @@ public class SDMConsoleUI
 
         return optionChoose;
     }
-
-
-
 }
