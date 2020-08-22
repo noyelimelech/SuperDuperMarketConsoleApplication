@@ -80,7 +80,7 @@ public class XMLHandlerBaseOnSchema
                 throw (new DuplicateItemException(sdmItem.getId()));
             }
             item=new Item(sdmItem.getId(),sdmItem.getName());
-            item.checkAndUpdateItemType(sdmItem.getPurchaseCategory());//צריך לבדוק אם לא נכון הטייפ ולזרוק אקספשיין
+            item.checkAndUpdateItemType(sdmItem.getPurchaseCategory());
             this.items.put(item.getId(),item);
         }
     }
@@ -93,7 +93,7 @@ public class XMLHandlerBaseOnSchema
 
         for (SDMStore sdmSt:sdmStores)
         {
-            st=new Store();
+            //st=new Store();
 
             for (Store s:this.stores)
             {
@@ -123,7 +123,7 @@ public class XMLHandlerBaseOnSchema
 
     private boolean checkIfIsLegalLocation(int x, int y)
     {
-        return((x>=Location.minBorder&&x<=Location.minBorder) && (y>=Location.minBorder&&y<=Location.maxBorder));
+        return((x>=Location.minBorder&&x<=Location.maxBorder) && (y>=Location.minBorder&&y<=Location.maxBorder));
     }
 
     //convert sdmPrices to storeItem

@@ -1,8 +1,10 @@
 import SDM.*;
-import SDM.Exception.*;
+import SDM.Exception.FileNotEndWithXMLException;
 import SDM.Exception.LocationIsOutOfBorderException;
 
 import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -12,7 +14,6 @@ public class SDMConsoleUI
     private final String[] mainMenu = {"Load new XML file.","Show all stores information","Show all items information.","Make new order.","Show all orders.","Exit."};
 
     public SDMConsoleUI() {
-        System.out.println("Test2");
         this.engine = new SDMEngine();
     }
 
@@ -128,7 +129,10 @@ public class SDMConsoleUI
         String filePath = xmlFilePathScanner.nextLine();
 
         try {
+
             engine.updateAllStoresAndAllItems(filePath);
+            //TODO add calling method of engine
+            //TODO exception handling and printing messages
         }
         catch (FileNotFoundException ex) {
             System.out.println("ERROR: The file does not exist in the path given, please try again.");
@@ -137,10 +141,10 @@ public class SDMConsoleUI
             System.out.println("ERROR: The file you given is not an XML file, please make sure it ends with .xml and try again");
         }
         catch(LocationIsOutOfBorderException ex) {
-            System.out.println("ERROR: The object of type " +  ex.getLocatableType() +
-                    " with id of: " + ex.getId() + " is located out of allowed borders which are between "
+            System.out.println("ERROR: The object of type " +  ex.getLocatableType()+
+                    "with id of: " + ex.getId() + " is located out of allowed borders which are between "
                     + ex.getMinBorder() + "to " + ex.getMaxBorder() + ".Please fix this ");
-        }//TODO more exceptions...
+        }
         catch(Exception ex) {
             System.out.println("ERROR: Unknown error has happen, the error message is: " + ex.getMessage());
         }
