@@ -24,11 +24,13 @@ public abstract class OrderItem {
     }
 
 
-    private StoreItem itemInOrder;
+    protected StoreItem itemInOrder;
 
     public OrderItem(StoreItem itemInOrder) {
         this.itemInOrder = itemInOrder;
     }
+
+    public abstract double getTotalPrice();
 
     public abstract void addAmount(String amountToAdd) throws NegativeAmountOfItemInOrderException;
 

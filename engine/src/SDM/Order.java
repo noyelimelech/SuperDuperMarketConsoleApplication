@@ -4,28 +4,30 @@ import SDM.Exception.NegativeAmountOfItemInOrderException;
 import com.sun.org.apache.xpath.internal.operations.Or;
 
 import java.util.*;
+import java.util.stream.DoubleStream;
 
 public class Order
 {
     private static int idCounter = 1;
     private int id;
     private Map<Integer, OrderItem> orderList;
-    private int deliveryPrice;
+    private Store storeOrderMadeFrom;
+    private double deliveryPrice;
     private Costumer costumer;
     private Date date;
-    private int priceOfAllItems;
-    private int totalPrice;
+    private double priceOfAllItems;
+    private double totalPrice;
 
-    private Order(Costumer costumer, Date date) {
+    private Order(Costumer costumer, Date date, Store storeOrderMadeFrom) {
         this.costumer = costumer;
         this.date = date;
         this.id = idCounter;
+        this.storeOrderMadeFrom = storeOrderMadeFrom;
         orderList = new HashMap<Integer, OrderItem>();
     }
 
-    public static Order makeNewOrder(Costumer costumer, Date date)
-    {
-        return new Order(costumer, date);
+    public static Order makeNewOrder(Costumer costumer, Date date, Store storeOrderMadeFrom) {
+        return new Order(costumer, date, storeOrderMadeFrom);
     }
 
     public void addItemToOrder(StoreItem itemToAdd, String amountToAdd) throws NegativeAmountOfItemInOrderException {
@@ -39,4 +41,18 @@ public class Order
         }
     }
 
+    public void completeOrder() {
+        idCounter++;
+        deliveryPrice = storeOrderMadeFrom.getDeliveryPPK() * distanceBetweenCostumerAndStore();
+        priceOfAllItems = calculatePriceOfOrderItems();
+        totalPrice = priceOfAllItems + deliveryPrice;
+    }
+
+    private double calculatePriceOfOrderItems() {
+        return orderList.values().stream().mapToDouble((orderItem) -> orderItem.getTotalPrice()).sum();
+    }
+
+    public double distanceBetweenCostumerAndStore() {
+        return Location.distanceBetweenLocations(costumer.getLocation(), storeOrderMadeFrom.getLocation());
+    }
 }

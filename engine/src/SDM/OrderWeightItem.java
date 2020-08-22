@@ -10,6 +10,11 @@ public class OrderWeightItem extends OrderItem{
         super(itemInOrder);
     }
 
+    @Override
+    public double getTotalPrice() {
+        return itemInOrder.getPrice() * weightOfItem;
+    }
+
     public double getWeightOfItem() {
         return weightOfItem;
     }

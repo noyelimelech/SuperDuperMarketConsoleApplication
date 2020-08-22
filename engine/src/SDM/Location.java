@@ -14,12 +14,18 @@ public class Location
         this.location = p;
     }
 
-
+    public Point getLocation() {
+        return location;
+    }
 
     public static boolean checkIfIsLegalLocation(int x, int y)
     {
         return((x>=Location.minBorder&&x<=Location.maxBorder) && (y>=Location.minBorder&&y<=Location.maxBorder));
     }
 
+    public static double distanceBetweenLocations(Location location1, Location location2) {
+        return Math.sqrt(Math.pow(location1.getLocation().getX() - location2.getLocation().getX(),2)
+                + Math.pow(location1.getLocation().getY() - location2.getLocation().getY(),2));
+    }
 }
 
