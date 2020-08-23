@@ -3,6 +3,7 @@ import SDM.Exception.FileNotEndWithXMLException;
 import SDM.Exception.InvalidIdStoreChooseException;
 import SDM.Exception.LocationIsOutOfBorderException;
 
+import java.awt.*;
 import java.io.FileNotFoundException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -61,11 +62,32 @@ public class SDMConsoleUI
     private void MakeNewOrder()
     {
         int chooseStore= getFromUserChooseStore();
-
         Date dateOrder=getValidDateFromCostumer();
+        Location costumerLocation=getValidCostumerLocation();
+        Costumer costumerEX1=new Costumer(1234,"user",costumerLocation);
 
+        //new Location(new Point(getValidOption(Location.maxBorder),getValidOption(Location.maxBorder)));
 
+        Order.makeNewOrder(costumerEX1,dateOrder,engine.getAllStoresMap().get(chooseStore));
+    }
 
+    private Location getValidCostumerLocation()
+    {
+
+        boolean flagIsValidCostumerLocation = false;
+        Location costumerLocation;
+        do {
+            System.out.println("Please insert your X location ");
+            int x = getValidOption(Location.maxBorder);
+            System.out.println("Please insert your y location ");
+            int y = getValidOption(Location.maxBorder);
+            costumerLocation =new Location(new Point(x,y));
+
+            flagIsValidCostumerLocation=engine.checkIfThisLocationInUsedOfStore(costumerLocation);
+        }
+        while(!flagIsValidCostumerLocation);
+
+        return (costumerLocation);
     }
 
     private int getFromUserChooseStore()
@@ -130,9 +152,9 @@ public class SDMConsoleUI
         boolean flagIsValidDate = true;
 
         do {
-            System.out.println("Enter the Date ,in format: dd/mm-hh:mm");
+            System.out.println("Enter the Date ,in format: d/M-hh:mm");
             String date = scanner.next();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm-hh:mm");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("d/M-hh:mm");
             Date date2 = null;
 
             try
@@ -176,9 +198,9 @@ public class SDMConsoleUI
 
     private void showItem(Item item) {
         showItemBasicData(item, "", '1');
-        System.out.println("4.Number of stores sell this item: " + item.getStoresSellThisItem().size());
-        System.out.println("5.Average price of this item: " + item.getAveragePrice());
-        System.out.println("6.Total amount that has been sold: " + item.getTotalAmountSoldOnAllStores() + (item.getType() == Item.ItemType.QUANTITY ? " pieces" : " KG"));
+        System.out.println("    4.Number of stores sell this item: " + item.getStoresSellThisItem().size());
+        System.out.println("    5.Average price of this item: " + item.getAveragePrice());
+        System.out.println("    6.Total amount that has been sold: " + item.getTotalAmountSoldOnAllStores() + (item.getType() == Item.ItemType.QUANTITY ? " pieces" : " KG"));
 
     }
 

@@ -64,12 +64,6 @@ public class Item
 
     }
 
-    public void updateStoresSellThisItem(int id)
-    {
-
-
-    }
-
     public void checkAndUpdateItemType(String purchaseCategory)
     {
         purchaseCategory=purchaseCategory.toUpperCase();

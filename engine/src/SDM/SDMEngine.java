@@ -22,6 +22,11 @@ public class SDMEngine
        return new ArrayList<>(allStores.values());
    }
 
+    public Map<Integer,Store> getAllStoresMap()
+    {
+        return this.allStores;
+    }
+
    public List<Item> getAllItems() {
        return new ArrayList<>(allItems.values());
    }
@@ -39,7 +44,7 @@ public class SDMEngine
            this.allStores.put(st.getId(),st);
        }
 
- ////////////////////////////Noy's job--->>>>>לבדוק
+ ////////////////////////////Noy's job
        for (Item item:this.allItems.values())
        {
            for (Store st:allStores.values())
@@ -64,5 +69,19 @@ public class SDMEngine
    }
 
 
+    public boolean checkIfThisLocationInUsedOfStore(Location costumerLocationToCheck)
+    {
+        boolean flagIsValidCostumerLocation=true;
 
+        for (Store st:this.getAllStores())
+        {
+            if(st.getLocation()==costumerLocationToCheck)
+                flagIsValidCostumerLocation=false;
+
+        }
+        return flagIsValidCostumerLocation;
+
+
+
+    }
 }
