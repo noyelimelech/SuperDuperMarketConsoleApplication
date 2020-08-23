@@ -38,8 +38,15 @@ public class SDMEngine
        {
            this.allStores.put(st.getId(),st);
        }
-       //List<Item> list;
-       //Map<Key,Item> map = new HashMap<Key,Item>();
-       //for (Item i : list) map.put(i.getKey(),i);
    }
+
+   public void CheckIfIsValidStoreId(int storeId) throws InvalidIdStoreChooseException
+   {
+       boolean flaIsValidIdStore= allStores.containsKey(storeId);
+       if (!flaIsValidIdStore)
+       {
+           throw(new InvalidIdStoreChooseException(storeId));
+       }
+   }
+
 }
