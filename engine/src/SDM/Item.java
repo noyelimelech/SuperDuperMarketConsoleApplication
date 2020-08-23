@@ -1,6 +1,7 @@
 package SDM;
 
-import java.util.HashMap;
+import SDM.Exception.NegativeAmountOfItemInException;
+
 import java.util.Map;
 
 public class Item
@@ -14,6 +15,7 @@ public class Item
     private String name;
     private ItemType type;
     private Map<Integer, Store> storesSellThisItem;
+    private double totalAmountSold = 0;
 
 
 
@@ -74,8 +76,21 @@ public class Item
         return avgPrice;
     }
 
-    public double getTotalSold() {
-        return -1; //TODO
+    public void addAmountThatSold(int amountToAdd) throws NegativeAmountOfItemInException {
+        addAmountThatSold((double)amountToAdd);
+    }
+
+    public void addAmountThatSold(double amountToAdd) throws NegativeAmountOfItemInException {
+        if(amountToAdd + totalAmountSold < 0) {
+            throw new NegativeAmountOfItemInException(String.valueOf(totalAmountSold), String.valueOf(amountToAdd));
+        }
+        else {
+            totalAmountSold += amountToAdd;
+        }
+    }
+
+    public double getTotalAmountSold() {
+        return totalAmountSold;
     }
 
 }
