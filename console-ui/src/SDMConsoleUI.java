@@ -243,7 +243,7 @@ public class SDMConsoleUI
             System.out.println('\t'+ "    d.price for 1kg is: " + storeItem.getPrice());
         }
 
-        System.out.println('\t'+ "    e.Total sold: "/*storeItem.totalSold()*/);     //TODO Daniel---> StoreItem + OrderItem+ Item--> need method in storeItem that says how many of this item has been sold
+        System.out.println('\t'+ "    e.Total sold: " + storeItem.getTotalAmountSoldInThisStore());     //TODO Daniel---> StoreItem + OrderItem+ Item--> need method in storeItem that says how many of this item has been sold
     }
 
     void showItemBasicData(Item itemToShow, String linePrefix, char countingPrefix) {
