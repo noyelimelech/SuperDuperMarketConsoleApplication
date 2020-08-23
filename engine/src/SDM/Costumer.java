@@ -18,4 +18,11 @@ public class Costumer implements  Locatable
     public void setLocation(Location location) {
         this.location = location;
     }
+
+    public Costumer(int id, String name, Location location) {
+        this.id = id;
+        this.name = name;
+        this.historyOrders = null;
+        this.location = location;
+    }
 }

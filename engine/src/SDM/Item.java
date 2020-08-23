@@ -2,10 +2,13 @@ package SDM;
 
 import SDM.Exception.NegativeAmountOfItemInException;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Item
 {
+
+
     public enum ItemType
     {
         QUANTITY,WEIGHT
@@ -47,23 +50,24 @@ public class Item
         return storesSellThisItem;
     }
 
-    public void setStoresSellThisItem(Map<Integer, Store> storesSellThisItem) {
-        this.storesSellThisItem = storesSellThisItem;
+    public void setStoresSellThisItem(Store st)
+    {
+        this.storesSellThisItem.put(st.getId(),st);
     }
 
     public Item(int id, String name)
     {
         this.id = id;
         this.name =name;
+        this.storesSellThisItem=new HashMap<>();
         //checkAndUpdateItemType(purchaseCategory);
-        storesSellThisItem=null;
+
     }
 
     public void checkAndUpdateItemType(String purchaseCategory)
     {
         purchaseCategory=purchaseCategory.toUpperCase();
         this.type=ItemType.valueOf(purchaseCategory);
-        ///לא ממש הבנתי מה קורה אם הסטרינג הוא לא אינם
     }
 
     public double getAveragePrice() {
