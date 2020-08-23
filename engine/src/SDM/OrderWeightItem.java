@@ -40,4 +40,9 @@ public class OrderWeightItem extends OrderItem{
     public void updateItemAmountSold() throws NegativeAmountOfItemInException {
         itemInOrder.getItem().addAmountThatSold(weightOfItem);
     }
+
+    @Override
+    public void updateStoreItemAmountSold() throws NegativeAmountOfItemInException {
+        itemInOrder.addAmountThatSold(weightOfItem);
+    }
 }

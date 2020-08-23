@@ -51,6 +51,7 @@ public class Order
         orderList.forEach((orderItemID, orderItem) -> {
             try {
                 orderItem.updateItemAmountSold();
+                orderItem.updateStoreItemAmountSold();
             } catch (NegativeAmountOfItemInException e) {
                 orderItem.clearAmount();
             }

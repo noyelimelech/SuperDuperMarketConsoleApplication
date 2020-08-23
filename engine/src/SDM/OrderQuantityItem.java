@@ -40,6 +40,11 @@ public class OrderQuantityItem extends OrderItem {
         itemInOrder.getItem().addAmountThatSold(quantity);
     }
 
+    @Override
+    public void updateStoreItemAmountSold() throws NegativeAmountOfItemInException {
+        itemInOrder.addAmountThatSold(quantity);
+    }
+
 
 }
 
