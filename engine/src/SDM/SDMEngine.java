@@ -38,6 +38,20 @@ public class SDMEngine
        {
            this.allStores.put(st.getId(),st);
        }
+
+ ////////////////////////////Noy's job--->>>>>לבדוק
+       for (Item item:this.allItems.values())
+       {
+           for (Store st:allStores.values())
+           {
+               if(st.getItemsThatSellInThisStore().containsKey(item.getId()))
+               {
+                   item.setStoresSellThisItem(st);
+               }
+           }
+       }
+
+
    }
 
    public void CheckIfIsValidStoreId(int storeId) throws InvalidIdStoreChooseException

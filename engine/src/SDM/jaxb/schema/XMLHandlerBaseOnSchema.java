@@ -81,6 +81,7 @@ public class XMLHandlerBaseOnSchema
             }
             item=new Item(sdmItem.getId(),sdmItem.getName());
             item.checkAndUpdateItemType(sdmItem.getPurchaseCategory());
+            item.updateStoresSellThisItem(sdmItem.getId());
             this.items.put(item.getId(),item);
         }
     }
