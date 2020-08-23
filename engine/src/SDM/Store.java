@@ -7,6 +7,7 @@ import java.util.*;
 
 public class Store implements Locatable
 {
+
     private int id;
     private String name;
     private int deliveryPPK;
@@ -73,4 +74,20 @@ public class Store implements Locatable
     {
         this.orders = orders;
     }
+
+
+    //TODO total amount for delivery
+    public double getTotalAmountForDeliveries()
+    {
+        double retAmountOfDeliveries=0;
+        for (Order order:this.getOrders())
+        {
+            retAmountOfDeliveries+=order.getDeliveryPrice();
+        }
+        return (retAmountOfDeliveries);
+    }
+
+
+
+
 }

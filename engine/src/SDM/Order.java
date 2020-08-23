@@ -55,4 +55,5 @@ public class Order
     public double distanceBetweenCostumerAndStore() {
         return Location.distanceBetweenLocations(costumer.getLocation(), storeOrderMadeFrom.getLocation());
     }
+
 }

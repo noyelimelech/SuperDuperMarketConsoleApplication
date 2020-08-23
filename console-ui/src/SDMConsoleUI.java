@@ -201,9 +201,12 @@ public class SDMConsoleUI
         System.out.println("2.Name:" + store.getName());
         System.out.println("3.Items sold by this store:");
         store.getItemsThatSellInThisStore().forEach(((storeItemID ,storeItem)-> {
-            System.out.print(i.getAndIncrement() + ".");
+            //System.out.print(i.getAndIncrement() + ".");
+            System.out.println("    ##Store Item number " + i.getAndIncrement()+ "##");
+
             showStoreItem(storeItem);
         }));
+
 
         System.out.println("4.Orders made by this store:");
         i.set(1);
@@ -216,31 +219,127 @@ public class SDMConsoleUI
                 showOrderInShowStoreChoice(order);
             }
         }
-
         System.out.println("5.PPK: " + store.getDeliveryPPK());
-        System.out.println("6.Amount of money got only for deliveries: "); //TODO total amount for delivery should be a method in store, needed to be added..
+        System.out.println("6.Amount of money got only for deliveries: "+ store.getTotalAmountForDeliveries()); //total amount for delivery should be a method in store, needed to be added..
     }
 
     //TODO
-    private void showOrderInShowStoreChoice(Order order) {
+    private void showOrderInShowStoreChoice(Order order)
+    {
+        /*
+
+        System.out.println("a.Date of order: " + order);
+        System.out.println("5.Average price of this item: " + item.getAveragePrice());
+        System.out.println("6.Total amount that has been sold: " + item.getTotalSold() + (item.getType() == Item.ItemType.QUANTITY ? " pieces" : " KG"));
+
+        */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /*
+
+            private void showAllItems() {
+        int i = 1;
+        for(Item item : engine.getAllItems()) {
+            System.out.println("####ITEM NUMBER " + i + "####");
+            showItem(item);
+            i++;
+            System.out.println("");
+        }
+    }
+
+    private void showItem(Item item) {
+        showItemBasicData(item, "", '1');
+        System.out.println("4.Number of stores sell this item: " + item.getStoresSellThisItem().size());
+        System.out.println("5.Average price of this item: " + item.getAveragePrice());
+        System.out.println("6.Total amount that has been sold: " + item.getTotalSold() + (item.getType() == Item.ItemType.QUANTITY ? " pieces" : " KG"));
+
+    }
+
+    private void showAllStores() {
+        int i = 1;
+        System.out.println("");
+        for(Store store : engine.getAllStores()) {
+            System.out.println("####STORE NUMBER " + i + "####");
+            showStore(store);
+            i++;
+            System.out.println("");
+        }
+    }
+
+    private void showStore(Store store) {
+        final AtomicInteger i = new AtomicInteger(1); //the only way to have an "i" in foreach loop inside of map is in this way, atomic integer
+                                                                //and the getAndIncrement method...
+
+        System.out.println("1.ID:" + store.getId());
+        System.out.println("2.Name:" + store.getName());
+        System.out.println("3.Items sold by this store:");
+        store.getItemsThatSellInThisStore().forEach(((storeItemID ,storeItem)-> {
+            //System.out.print(i.getAndIncrement() + ".");
+            System.out.println("    ##Store Item number " + i.getAndIncrement()+ "##");
+
+            showStoreItem(storeItem);
+        }));
+
+
+
+
+
+
+
+
+
+
+
+         */
+
+
+
+
+
+
+
+
     }
 
     private void showStoreItem(StoreItem storeItem) {
         showItemBasicData(storeItem.getItem(),"\t", 'a');
         if(storeItem.getItem().getType() == Item.ItemType.QUANTITY) {
-            System.out.println('\t' + "d.price for 1 item is: " + storeItem.getPrice());
+            System.out.println('\t'+ "    d.price for 1 item is: " + storeItem.getPrice());
         }
         else {
-            System.out.println('\t' + "d.price for 1kg is: " + storeItem.getPrice());
+            System.out.println('\t'+ "    d.price for 1kg is: " + storeItem.getPrice());
         }
 
-        System.out.println('\t' + "e.Total sold: "/*storeItem.totalSold()*/);     //TODO need method in storeItem that says how many of this item has been sold
+        System.out.println('\t'+ "    e.Total sold: "/*storeItem.totalSold()*/);     //TODO need method in storeItem that says how many of this item has been sold
     }
 
     void showItemBasicData(Item itemToShow, String linePrefix, char countingPrefix) {
-        System.out.println(linePrefix + countingPrefix + ".ID: " + itemToShow.getId());
-        System.out.println(linePrefix + (++countingPrefix) + ".Name: " +  itemToShow.getName());
-        System.out.println(linePrefix + (++countingPrefix) + ".Purchase type: " + itemToShow.getType());//TODO need to make this enum to print his name when calling to toString, read about it..
+        System.out.println("    "+linePrefix + countingPrefix + ".ID: " + itemToShow.getId());
+        System.out.println("    "+linePrefix + (++countingPrefix) + ".Name: " +  itemToShow.getName());
+        System.out.println("    "+linePrefix + (++countingPrefix) + ".Purchase type: " + itemToShow.getType());//TODO need to make this enum to print his name when calling to toString, read about it..
 
     }
 
