@@ -65,4 +65,64 @@ public class Order
         return Location.distanceBetweenLocations(costumer.getLocation(), storeOrderMadeFrom.getLocation());
     }
 
+
+    public int getId() {
+        return id;
+    }
+
+    public Map<Integer, OrderItem> getOrderList() {
+        return orderList;
+    }
+
+    public Store getStoreOrderMadeFrom() {
+        return storeOrderMadeFrom;
+    }
+
+    public Costumer getCostumer() {
+        return costumer;
+    }
+
+    public double getPriceOfAllItems() {
+        return priceOfAllItems;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+
+    //Noy's job
+    public int getTotalItemsInOrder()
+    {
+        int totalItems=0;
+
+        /*
+        for (OrderItem orderitem:orderList.values())
+        {
+
+         */
+
+        for (Map.Entry<Integer, OrderItem> iterator : orderList.entrySet())
+        {
+
+            Integer key = iterator.getKey();
+            OrderItem orderItem = iterator.getValue();
+            Item.ItemType type=orderItem.getItemInOrder().getItem().getType();
+
+            switch (type)
+            {
+                case QUANTITY:
+                    totalItems+=((OrderQuantityItem)orderItem).getQuantity();
+                    break;
+                case WEIGHT:
+                    totalItems+=1;
+                    break;
+            }
+        }
+        return (totalItems);
+    }
 }

@@ -76,7 +76,7 @@ public class Store implements Locatable
     }
 
 
-    //TODO total amount for delivery
+    //Noy's job--> total amount for delivery
     public double getTotalAmountForDeliveries()
     {
         double retAmountOfDeliveries=0;
