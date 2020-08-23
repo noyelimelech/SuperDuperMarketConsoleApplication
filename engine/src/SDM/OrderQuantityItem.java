@@ -1,6 +1,6 @@
 package SDM;
 
-import SDM.Exception.NegativeAmountOfItemInOrderException;
+import SDM.Exception.NegativeAmountOfItemInException;
 
 public class OrderQuantityItem extends OrderItem {
 
@@ -15,19 +15,29 @@ public class OrderQuantityItem extends OrderItem {
         return itemInOrder.getPrice() * quantity;
     }
 
+    @Override
+    public void clearAmount() {
+        quantity = 0;
+    }
+
     public int getQuantity() {
         return quantity;
     }
 
     @Override
-    public void addAmount(String quantityToAdd) throws NegativeAmountOfItemInOrderException {
+    public void addAmount(String quantityToAdd) throws NegativeAmountOfItemInException {
         int addedQuantity = Integer.parseInt(quantityToAdd);
         if(quantity + addedQuantity < 0) {
-            throw new NegativeAmountOfItemInOrderException(String.valueOf(quantity), quantityToAdd);
+            throw new NegativeAmountOfItemInException(String.valueOf(quantity), quantityToAdd);
         }
         else {
             quantity += addedQuantity;
         }
+    }
+
+    @Override
+    public void updateItemAmountSold() throws NegativeAmountOfItemInException {
+        itemInOrder.getItem().addAmountThatSold(quantity);
     }
 
 
