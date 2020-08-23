@@ -1,10 +1,8 @@
 package SDM;
 
-import SDM.Exception.NegativeAmountOfItemInOrderException;
-import com.sun.org.apache.xpath.internal.operations.Or;
+import SDM.Exception.NegativeAmountOfItemInException;
 
 import java.util.*;
-import java.util.stream.DoubleStream;
 
 public class Order
 {
@@ -23,14 +21,18 @@ public class Order
         this.date = date;
         this.id = idCounter;
         this.storeOrderMadeFrom = storeOrderMadeFrom;
-        orderList = new HashMap<Integer, OrderItem>();
+        orderList = new HashMap<>();
     }
 
     public static Order makeNewOrder(Costumer costumer, Date date, Store storeOrderMadeFrom) {
         return new Order(costumer, date, storeOrderMadeFrom);
     }
 
-    public void addItemToOrder(StoreItem itemToAdd, String amountToAdd) throws NegativeAmountOfItemInOrderException {
+    public double getDeliveryPrice() {
+        return deliveryPrice;
+    }
+
+    public void addItemToOrder(StoreItem itemToAdd, String amountToAdd) throws NegativeAmountOfItemInException {
         if(orderList.containsKey(itemToAdd.getItem().getId())) {
             orderList.get(itemToAdd.getItem().getId()).addAmount(amountToAdd);
         }
@@ -46,10 +48,17 @@ public class Order
         deliveryPrice = storeOrderMadeFrom.getDeliveryPPK() * distanceBetweenCostumerAndStore();
         priceOfAllItems = calculatePriceOfOrderItems();
         totalPrice = priceOfAllItems + deliveryPrice;
+        orderList.forEach((orderItemID, orderItem) -> {
+            try {
+                orderItem.updateItemAmountSold();
+            } catch (NegativeAmountOfItemInException e) {
+                orderItem.clearAmount();
+            }
+        });
     }
 
     private double calculatePriceOfOrderItems() {
-        return orderList.values().stream().mapToDouble((orderItem) -> orderItem.getTotalPrice()).sum();
+        return orderList.values().stream().mapToDouble(OrderItem::getTotalPrice).sum();
     }
 
     public double distanceBetweenCostumerAndStore() {
