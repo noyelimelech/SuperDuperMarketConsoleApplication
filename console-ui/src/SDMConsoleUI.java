@@ -178,7 +178,7 @@ public class SDMConsoleUI
         showItemBasicData(item, "", '1');
         System.out.println("4.Number of stores sell this item: " + item.getStoresSellThisItem().size());
         System.out.println("5.Average price of this item: " + item.getAveragePrice());
-        System.out.println("6.Total amount that has been sold: " + item.getTotalAmountSold() + (item.getType() == Item.ItemType.QUANTITY ? " pieces" : " KG"));
+        System.out.println("6.Total amount that has been sold: " + item.getTotalAmountSoldOnAllStores() + (item.getType() == Item.ItemType.QUANTITY ? " pieces" : " KG"));
 
     }
 

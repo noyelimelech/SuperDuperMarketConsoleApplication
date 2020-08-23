@@ -15,7 +15,7 @@ public class Item
     private String name;
     private ItemType type;
     private Map<Integer, Store> storesSellThisItem;
-    private double totalAmountSold = 0;
+    private double totalAmountSoldOnAllStores = 0;
 
 
 
@@ -81,16 +81,16 @@ public class Item
     }
 
     public void addAmountThatSold(double amountToAdd) throws NegativeAmountOfItemInException {
-        if(amountToAdd + totalAmountSold < 0) {
-            throw new NegativeAmountOfItemInException(String.valueOf(totalAmountSold), String.valueOf(amountToAdd));
+        if(amountToAdd + totalAmountSoldOnAllStores < 0) {
+            throw new NegativeAmountOfItemInException(String.valueOf(totalAmountSoldOnAllStores), String.valueOf(amountToAdd));
         }
         else {
-            totalAmountSold += amountToAdd;
+            totalAmountSoldOnAllStores += amountToAdd;
         }
     }
 
-    public double getTotalAmountSold() {
-        return totalAmountSold;
+    public double getTotalAmountSoldOnAllStores() {
+        return totalAmountSoldOnAllStores;
     }
 
 }
