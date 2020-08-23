@@ -178,7 +178,7 @@ public class SDMConsoleUI
         showItemBasicData(item, "", '1');
         System.out.println("4.Number of stores sell this item: " + item.getStoresSellThisItem().size());
         System.out.println("5.Average price of this item: " + item.getAveragePrice());
-        System.out.println("6.Total amount that has been sold: " + item.getTotalSold() + (item.getType() == Item.ItemType.QUANTITY ? " pieces" : " KG"));
+        System.out.println("6.Total amount that has been sold: " + item.getTotalAmountSold() + (item.getType() == Item.ItemType.QUANTITY ? " pieces" : " KG"));
 
     }
 
@@ -201,9 +201,12 @@ public class SDMConsoleUI
         System.out.println("2.Name:" + store.getName());
         System.out.println("3.Items sold by this store:");
         store.getItemsThatSellInThisStore().forEach(((storeItemID ,storeItem)-> {
-            System.out.print(i.getAndIncrement() + ".");
+            //System.out.print(i.getAndIncrement() + ".");
+            System.out.println("    ##Store-Item number " + i.getAndIncrement()+ "##");
+
             showStoreItem(storeItem);
         }));
+
 
         System.out.println("4.Orders made by this store:");
         i.set(1);
@@ -216,31 +219,37 @@ public class SDMConsoleUI
                 showOrderInShowStoreChoice(order);
             }
         }
-
         System.out.println("5.PPK: " + store.getDeliveryPPK());
-        System.out.println("6.Amount of money got only for deliveries: "); //TODO total amount for delivery should be a method in store, needed to be added..
+        System.out.println("6.Amount of money got only for deliveries: "+ store.getTotalAmountForDeliveries()); //total amount for delivery should be a method in store, needed to be added..
     }
 
-    //TODO
-    private void showOrderInShowStoreChoice(Order order) {
+    //Noy's job
+    private void showOrderInShowStoreChoice(Order order)
+    {
+
+        System.out.println("a.Date of order: " + order.getDate());
+        System.out.println("b.Total items: " + order.getTotalItemsInOrder());//Noy's job---> method in Order "getTotalItemsInOrder".
+        System.out.println("c.Total price of all items: " + order.getPriceOfAllItems());
+        System.out.println("d.Delivery price: " + order.getDeliveryPrice());
+        System.out.println("e.Total order price: " + order.getDeliveryPrice()+order.getPriceOfAllItems());
     }
 
     private void showStoreItem(StoreItem storeItem) {
         showItemBasicData(storeItem.getItem(),"\t", 'a');
         if(storeItem.getItem().getType() == Item.ItemType.QUANTITY) {
-            System.out.println('\t' + "d.price for 1 item is: " + storeItem.getPrice());
+            System.out.println('\t'+ "    d.price for 1 item is: " + storeItem.getPrice());
         }
         else {
-            System.out.println('\t' + "d.price for 1kg is: " + storeItem.getPrice());
+            System.out.println('\t'+ "    d.price for 1kg is: " + storeItem.getPrice());
         }
 
-        System.out.println('\t' + "e.Total sold: "/*storeItem.totalSold()*/);     //TODO need method in storeItem that says how many of this item has been sold
+        System.out.println('\t'+ "    e.Total sold: "/*storeItem.totalSold()*/);     //TODO Daniel---> StoreItem + OrderItem+ Item--> need method in storeItem that says how many of this item has been sold
     }
 
     void showItemBasicData(Item itemToShow, String linePrefix, char countingPrefix) {
-        System.out.println(linePrefix + countingPrefix + ".ID: " + itemToShow.getId());
-        System.out.println(linePrefix + (++countingPrefix) + ".Name: " +  itemToShow.getName());
-        System.out.println(linePrefix + (++countingPrefix) + ".Purchase type: " + itemToShow.getType());//TODO need to make this enum to print his name when calling to toString, read about it..
+        System.out.println("    "+linePrefix + countingPrefix + ".ID: " + itemToShow.getId());
+        System.out.println("    "+linePrefix + (++countingPrefix) + ".Name: " +  itemToShow.getName());
+        System.out.println("    "+linePrefix + (++countingPrefix) + ".Purchase type: " + itemToShow.getType());
 
     }
 
