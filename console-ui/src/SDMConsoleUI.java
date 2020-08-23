@@ -1,10 +1,12 @@
 import SDM.*;
 import SDM.Exception.FileNotEndWithXMLException;
+import SDM.Exception.InvalidIdStoreChooseException;
 import SDM.Exception.LocationIsOutOfBorderException;
 
 import java.io.FileNotFoundException;
-import java.nio.file.Files;
-import java.util.InputMismatchException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -46,6 +48,7 @@ public class SDMConsoleUI
                 break;
             case 4:
                 //TODO call method on engine does a new order
+                MakeNewOrder();
                 break;
             case 5:
                 //TODO show all orders
@@ -54,6 +57,112 @@ public class SDMConsoleUI
 
         return false;
     }
+
+    private void MakeNewOrder()
+    {
+        int chooseStore= getFromUserChooseStore();
+
+        Date dateOrder=getValidDateFromCostumer();
+
+
+
+    }
+
+    private int getFromUserChooseStore()
+    {
+        boolean flagIsValidChoose;
+        int idStoreChoose;
+
+        do{
+            System.out.println("Please select an id store from the stores below: ");
+
+            for(Store st: engine.getAllStores())
+            {
+                System.out.println("\n");
+                showStoreBasicDetails(st);
+            }
+
+            idStoreChoose=getChooseFromUser();
+
+            try
+            {
+                engine.CheckIfIsValidStoreId(idStoreChoose);
+                flagIsValidChoose=true;
+
+            }
+            catch (InvalidIdStoreChooseException e)
+            {
+                flagIsValidChoose=false;
+                System.out.println("the id store is not correct, please try again ");
+            }
+        }
+        while (!flagIsValidChoose);
+
+        return(idStoreChoose);
+
+        /*
+        while (!flagIsValidChoose)
+        {
+            idStoreChoose=getChooseFromUser();
+            flagIsValidChoose=engine.CheckIfIsValidStoreId(idStoreChoose);
+            if (!flagIsValidChoose)
+            {
+                System.out.println("the id store is not correct, please try again ");
+            }
+        }
+        return(idStoreChoose);
+
+         */
+
+    }
+
+    private int getChooseFromUser()
+    {
+        Scanner scan = new Scanner(System.in);
+        int choose = scan.nextInt();
+        return (choose);
+    }
+
+    private Date getValidDateFromCostumer()
+    {
+        Scanner scanner = new Scanner(System.in);
+
+        boolean flagIsValidDate = true;
+
+        do {
+            System.out.println("Enter the Date ,in format: dd/mm-hh:mm");
+            String date = scanner.next();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm-hh:mm");
+            Date date2 = null;
+
+            try
+            {
+                //Parsing the String
+                date2 = dateFormat.parse(date);
+            }
+            catch (ParseException e)
+            {
+                System.out.println("the date is not in the flowing format:  dd/mm-hh:mm \n please try again");
+                flagIsValidDate = false;
+            }
+
+            return(date2);
+        }
+        while (!flagIsValidDate);
+    }
+
+    private void showStoreBasicDetails(Store st)
+    {
+        System.out.println("    ID:" + st.getId());
+        System.out.println("    Name:" + st.getName());
+        System.out.println("    PPK: " + st.getDeliveryPPK());
+    }
+
+
+
+
+
+
 
     private void showAllItems() {
         int i = 1;
