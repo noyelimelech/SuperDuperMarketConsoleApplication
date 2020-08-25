@@ -2,9 +2,11 @@ import SDM.*;
 import SDM.Exception.FileNotEndWithXMLException;
 import SDM.Exception.InvalidIdStoreChooseException;
 import SDM.Exception.LocationIsOutOfBorderException;
+import SDM.Exception.NegativeAmountOfItemInException;
 
 import java.awt.*;
 import java.io.FileNotFoundException;
+import java.sql.SQLOutput;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,13 +16,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SDMConsoleUI
 {
     private SDMEngine engine;
-    private final String[] mainMenu = {"Load new XML file.","Show all stores information","Show all items information.","Make new order.","Show all orders.","Exit."};
+    private final String[] mainMenu = {"Load new XML file.", "Show all stores information", "Show all items information.", "Make new order.", "Show all orders.", "Exit."};
 
     public SDMConsoleUI() {
         this.engine = new SDMEngine();
     }
 
-    public void start() {
+    public void start()
+    {
         boolean isFinished;
         int optionChoose;
 
@@ -29,15 +32,15 @@ public class SDMConsoleUI
             optionChoose = getValidOption(mainMenu.length);
             isFinished = executeOptionChoose(optionChoose, mainMenu.length);
             System.out.println("");
-        }while(!isFinished);
+        } while (!isFinished);
     }
 
     private boolean executeOptionChoose(int choice, int exitOption) {
-        if(choice == exitOption){
+        if (choice == exitOption) {
             return true;
         }
 
-        switch (choice){
+        switch (choice) {
             case 1:
                 loadNewXML();
                 break;
@@ -48,7 +51,6 @@ public class SDMConsoleUI
                 showAllItems();
                 break;
             case 4:
-                //TODO call method on engine does a new order
                 MakeNewOrder();
                 break;
             case 5:
@@ -59,20 +61,20 @@ public class SDMConsoleUI
         return false;
     }
 
-    private void MakeNewOrder()
-    {
-        int chooseStore= getFromUserChooseStore();
-        Date dateOrder=getValidDateFromCostumer();
-        Location costumerLocation=getValidCostumerLocation();
-        Costumer costumerEX1=new Costumer(1234,"user",costumerLocation);
 
-        //new Location(new Point(getValidOption(Location.maxBorder),getValidOption(Location.maxBorder)));
+    //noy
+    private void showAllItemsInAllStores(Store store) {
+        engine.updateAllStoreItemsForSaleInCurrentStoreOrder();
 
-        Order.makeNewOrder(costumerEX1,dateOrder,engine.getAllStoresMap().get(chooseStore));
+        for (StoreItem stItem : engine.getAllStoreItemsWithPriceForSpecificStore()) {
+            showItemBasicData(stItem.getItem(), "", '1');
+            System.out.println("    " + "4" + ".ID: " + stItem.getPrice());
+        }
     }
 
-    private Location getValidCostumerLocation()
-    {
+
+    //NOY
+    private Location getValidCostumerLocation() {
 
         boolean flagIsValidCostumerLocation = false;
         Location costumerLocation;
@@ -81,46 +83,42 @@ public class SDMConsoleUI
             int x = getValidOption(Location.maxBorder);
             System.out.println("Please insert your y location ");
             int y = getValidOption(Location.maxBorder);
-            costumerLocation =new Location(new Point(x,y));
+            costumerLocation = new Location(new Point(x, y));
 
-            flagIsValidCostumerLocation=engine.checkIfThisLocationInUsedOfStore(costumerLocation);
+            flagIsValidCostumerLocation = engine.checkIfThisLocationInUsedOfStore(costumerLocation);
         }
-        while(!flagIsValidCostumerLocation);
+        while (!flagIsValidCostumerLocation);
 
         return (costumerLocation);
     }
 
-    private int getFromUserChooseStore()
-    {
+    //NOY
+    private int getFromUserChooseStore() {
         boolean flagIsValidChoose;
         int idStoreChoose;
 
-        do{
+        do {
             System.out.println("Please select an id store from the stores below: ");
 
-            for(Store st: engine.getAllStores())
-            {
+            for (Store st : engine.getAllStores()) {
                 System.out.println("\n");
                 showStoreBasicDetails(st);
             }
 
-            idStoreChoose=getChooseFromUser();
+            idStoreChoose = getChooseFromUser();
 
-            try
-            {
+            try {
                 engine.CheckIfIsValidStoreId(idStoreChoose);
-                flagIsValidChoose=true;
+                flagIsValidChoose = true;
 
-            }
-            catch (InvalidIdStoreChooseException e)
-            {
-                flagIsValidChoose=false;
+            } catch (InvalidIdStoreChooseException e) {
+                flagIsValidChoose = false;
                 System.out.println("the id store is not correct, please try again ");
             }
         }
         while (!flagIsValidChoose);
 
-        return(idStoreChoose);
+        return (idStoreChoose);
 
         /*
         while (!flagIsValidChoose)
@@ -138,57 +136,48 @@ public class SDMConsoleUI
 
     }
 
-    private int getChooseFromUser()
-    {
+    //NOY
+    private int getChooseFromUser() {
         Scanner scan = new Scanner(System.in);
         int choose = scan.nextInt();
         return (choose);
     }
 
-    private Date getValidDateFromCostumer()
-    {
+    //NOY
+    private Date getValidDateFromCostumer() {
         Scanner scanner = new Scanner(System.in);
 
         boolean flagIsValidDate = true;
 
         do {
-            System.out.println("Enter the Date ,in format: d/M-hh:mm");
+            System.out.println("Enter the Date ,in format: dd/MM-HH:mm");
             String date = scanner.next();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("d/M-hh:mm");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM-HH:mm");
             Date date2 = null;
 
-            try
-            {
+            try {
                 //Parsing the String
                 date2 = dateFormat.parse(date);
-            }
-            catch (ParseException e)
-            {
-                System.out.println("the date is not in the flowing format:  dd/mm-hh:mm \n please try again");
+            } catch (ParseException e) {
+                System.out.println("the date is not in the flowing format:  dd/MM-HH:mm \n please try again");
                 flagIsValidDate = false;
             }
 
-            return(date2);
+            return (date2);
         }
         while (!flagIsValidDate);
     }
 
-    private void showStoreBasicDetails(Store st)
-    {
+    private void showStoreBasicDetails(Store st) {
         System.out.println("    ID:" + st.getId());
         System.out.println("    Name:" + st.getName());
         System.out.println("    PPK: " + st.getDeliveryPPK());
     }
 
 
-
-
-
-
-
     private void showAllItems() {
         int i = 1;
-        for(Item item : engine.getAllItems()) {
+        for (Item item : engine.getAllItems()) {
             System.out.println("####ITEM NUMBER " + i + "####");
             showItem(item);
             i++;
@@ -207,7 +196,7 @@ public class SDMConsoleUI
     private void showAllStores() {
         int i = 1;
         System.out.println("");
-        for(Store store : engine.getAllStores()) {
+        for (Store store : engine.getAllStores()) {
             System.out.println("####STORE NUMBER " + i + "####");
             showStore(store);
             i++;
@@ -217,14 +206,14 @@ public class SDMConsoleUI
 
     private void showStore(Store store) {
         final AtomicInteger i = new AtomicInteger(1); //the only way to have an "i" in foreach loop inside of map is in this way, atomic integer
-                                                                //and the getAndIncrement method...
+        //and the getAndIncrement method...
 
         System.out.println("1.ID:" + store.getId());
         System.out.println("2.Name:" + store.getName());
         System.out.println("3.Items sold by this store:");
-        store.getItemsThatSellInThisStore().forEach(((storeItemID ,storeItem)-> {
+        store.getItemsThatSellInThisStore().forEach(((storeItemID, storeItem) -> {
             //System.out.print(i.getAndIncrement() + ".");
-            System.out.println("    ##Store-Item number " + i.getAndIncrement()+ "##");
+            System.out.println("    ##Store-Item number " + i.getAndIncrement() + "##");
 
             showStoreItem(storeItem);
         }));
@@ -232,46 +221,43 @@ public class SDMConsoleUI
 
         System.out.println("4.Orders made by this store:");
         i.set(1);
-        if(store.getOrders().isEmpty()) {
+        if (store.getOrders().isEmpty()) {
             System.out.println("This store hadn't made any orders yet.");
-        }
-        else {
+        } else {
             for (Order order : store.getOrders()) {
-                 System.out.print(i.getAndIncrement() + ".");
+                System.out.print(i.getAndIncrement() + ".");
                 showOrderInShowStoreChoice(order);
             }
         }
         System.out.println("5.PPK: " + store.getDeliveryPPK());
-        System.out.println("6.Amount of money got only for deliveries: "+ store.getTotalAmountForDeliveries()); //total amount for delivery should be a method in store, needed to be added..
+        System.out.println("6.Amount of money got only for deliveries: " + store.getTotalAmountForDeliveries()); //total amount for delivery should be a method in store, needed to be added..
     }
 
-    //Noy's job
-    private void showOrderInShowStoreChoice(Order order)
-    {
+
+    private void showOrderInShowStoreChoice(Order order) {
 
         System.out.println("a.Date of order: " + order.getDate());
         System.out.println("b.Total items: " + order.getTotalItemsInOrder());//Noy's job---> method in Order "getTotalItemsInOrder".
         System.out.println("c.Total price of all items: " + order.getPriceOfAllItems());
         System.out.println("d.Delivery price: " + order.getDeliveryPrice());
-        System.out.println("e.Total order price: " + order.getDeliveryPrice()+order.getPriceOfAllItems());
+        System.out.println("e.Total order price: " + order.getDeliveryPrice() + order.getPriceOfAllItems());
     }
 
     private void showStoreItem(StoreItem storeItem) {
-        showItemBasicData(storeItem.getItem(),"\t", 'a');
-        if(storeItem.getItem().getType() == Item.ItemType.QUANTITY) {
-            System.out.println('\t'+ "    d.price for 1 item is: " + storeItem.getPrice());
-        }
-        else {
-            System.out.println('\t'+ "    d.price for 1kg is: " + storeItem.getPrice());
+        showItemBasicData(storeItem.getItem(), "\t", 'a');
+        if (storeItem.getItem().getType() == Item.ItemType.QUANTITY) {
+            System.out.println('\t' + "    d.price for 1 item is: " + storeItem.getPrice());
+        } else {
+            System.out.println('\t' + "    d.price for 1kg is: " + storeItem.getPrice());
         }
 
-        System.out.println('\t'+ "    e.Total sold: " + storeItem.getTotalAmountSoldInThisStore());     //TODO Daniel---> StoreItem + OrderItem+ Item--> need method in storeItem that says how many of this item has been sold
+        System.out.println('\t' + "    e.Total sold: " + storeItem.getTotalAmountSoldInThisStore());
     }
 
     void showItemBasicData(Item itemToShow, String linePrefix, char countingPrefix) {
-        System.out.println("    "+linePrefix + countingPrefix + ".ID: " + itemToShow.getId());
-        System.out.println("    "+linePrefix + (++countingPrefix) + ".Name: " +  itemToShow.getName());
-        System.out.println("    "+linePrefix + (++countingPrefix) + ".Purchase type: " + itemToShow.getType());
+        System.out.println("    " + linePrefix + countingPrefix + ".ID: " + itemToShow.getId());
+        System.out.println("    " + linePrefix + (++countingPrefix) + ".Name: " + itemToShow.getName());
+        System.out.println("    " + linePrefix + (++countingPrefix) + ".Purchase type: " + itemToShow.getType());
 
     }
 
@@ -283,19 +269,15 @@ public class SDMConsoleUI
         try {
             engine.updateAllStoresAndAllItems(filePath);
             System.out.println("XML file loaded successfully!");
-        }
-        catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException ex) {
             System.out.println("ERROR: The file does not exist in the path given, please try again.");
-        }
-        catch(FileNotEndWithXMLException ex) {
+        } catch (FileNotEndWithXMLException ex) {
             System.out.println("ERROR: The file you given is not an XML file, please make sure it ends with .xml and try again");
-        }
-        catch(LocationIsOutOfBorderException ex) {
-            System.out.println("ERROR: The object of type " +  ex.getLocatableType()+
+        } catch (LocationIsOutOfBorderException ex) {
+            System.out.println("ERROR: The object of type " + ex.getLocatableType() +
                     "with id of: " + ex.getId() + " is located out of allowed borders which are between "
                     + ex.getMinBorder() + "to " + ex.getMaxBorder() + ".Please fix this ");
-        }
-        catch(Exception ex) {
+        } catch (Exception ex) {
             System.out.println("ERROR: Unknown error has happen, the error message is: " + ex.getMessage());
         }
 
@@ -303,7 +285,7 @@ public class SDMConsoleUI
 
     private void showMainMenu() {
         for (int i = 0; i < mainMenu.length; i++) {
-            System.out.println(i+1 + "." + mainMenu[i]);
+            System.out.println(i + 1 + "." + mainMenu[i]);
         }
     }
 
@@ -314,20 +296,207 @@ public class SDMConsoleUI
         int optionChoose = 1;
 
         do {
-            try{
+            try {
                 System.out.print("Please enter your choice: ");
-                optionChoose =  Integer.parseInt(scannerFromConsole.nextLine());
-                if(optionChoose >= 1 && optionChoose <= optionMaxBound) {
+                optionChoose = Integer.parseInt(scannerFromConsole.nextLine());
+                if (optionChoose >= 1 && optionChoose <= optionMaxBound) {
                     isValidOption = true;
-                }
-                else {
+                } else {
                     System.out.println("Please give a number in the range of 1 to " + optionMaxBound + "\n");
                 }
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 System.out.println("Please give an integer in the range of 1 to " + optionMaxBound + "\n");
             }
-        }while(!isValidOption);
+        } while (!isValidOption);
 
         return optionChoose;
     }
+
+
+///////////////////////////////////////////////////////NOY //////////////////////////////////////////////
+
+    private void MakeNewOrder()
+    {
+        int chooseStore = getFromUserChooseStore();
+        Date dateOrder = getValidDateFromCostumer();
+        Location costumerLocation = getValidCostumerLocation();
+        Costumer costumerEX1 = new Costumer(1234, "user", costumerLocation);
+        engine.createNewOrder(costumerEX1, dateOrder, engine.getAllStoresMap().get(chooseStore));
+
+        getFromUserItemsAndAmountAndUpdateTheOrder(chooseStore);
+        showOrderSummary(engine.getCurrentOrder());
+        System.out.println("Do you want to confirm the order? (Y/N)");
+        String confirmationChoice = getValidOrderConfirmation();
+        if(confirmationChoice.toLowerCase() == "y") {
+            engine.completeCurrentOrder();
+            System.out.println("Order confirmed, thank you for using our SDM system.");
+        }
+        else {
+            System.out.println("Order canceled, hope to see you waisting your money on us at other time");
+        }
+    }
+
+    private String getValidOrderConfirmation() {
+        Scanner inputScanner = new Scanner(System.in);
+        String input = inputScanner.nextLine().toLowerCase();
+        boolean inputValid = false;
+        do {
+            if(input == "y" || input == "n") {
+                inputValid = true;
+            }
+            else {
+                System.out.println("You must enter an Y or N to confirm or cancel the order");
+            }
+        } while(!inputValid);
+
+        return input;
+    }
+
+    private void showOrderSummary(Order order) {
+        int i = 1;
+
+        System.out.println("Summary of order:");
+        System.out.println("Order item:");
+        for(OrderItem orderItem : order.getOrderItemCart().values()) {
+            System.out.println("\t###ORDER ITEM " + i++ + "###");
+            showOrderItem(orderItem);
+        }
+        System.out.println(String.format("Delivery price: %.2f",order.getDeliveryPrice()));
+    }
+
+    private void showOrderItem(OrderItem orderItem) {
+        System.out.println("\t\t1.ID: " + orderItem.getItemInOrder().getItem().getId());
+        System.out.println("\t\t2.Name: " + orderItem.getItemInOrder().getItem().getName());
+        System.out.println("\t\t3.Type: " + orderItem.getItemInOrder().getItem().getType());
+        System.out.println("\t\t4.Price: " + orderItem.getItemInOrder().getPrice());
+        System.out.println("\t\t5.Amount in order: " + orderItem.getAmount());
+        System.out.println("\t\t6.Total price in order: " + orderItem.getTotalPrice());
+    }
+
+    private void getFromUserItemsAndAmountAndUpdateTheOrder(int choosedStore)
+    {
+        int choosedItem;
+        Boolean flagIsQ = new Boolean(false);
+        do {
+            showAllItemsInAllStores(engine.getAllStoresMap().get(choosedStore));
+            choosedItem = getFromUserValidItemId(flagIsQ);
+            if (!flagIsQ) {
+                String choosedAmountOfItem = getFromUserValidChooseAmount(choosedItem);  //להשתמש בפונקציה שדניאל בטח כתב שמטפלת בקליטת כמות שלילית
+                try {
+                    engine.addItemToCurrentOrder(choosedItem, choosedAmountOfItem);
+                }
+                catch (NegativeAmountOfItemInException ex) {
+                    System.out.println("ERROR: Unknown error happend, probably tried to add an amount that made the total amount negative" +
+                            " amount tried to add " + ex.getAmountTriedToAdd() + " amount in the order " + ex.getCurrentAmount());
+                }
+            }
+            else //if (flagIsQ)
+            {
+                System.out.println("bottom q is pushed, Preparing the order");
+            }
+        }
+        while (!flagIsQ);
+    }
+
+    private int getFromUserValidItemId(Boolean flagIsQ)
+    {
+        boolean flagIsValidItemId=false;
+        int choosedItemNumber = 0;
+
+        do {
+            System.out.println("Please enter Item Id you would like to order");
+            Scanner scan = new Scanner(System.in);
+            String stringChoose = scan.nextLine();
+            if (stringChoose.toLowerCase() == "q")
+            {
+                flagIsQ = true;
+                return (0);
+            }
+
+            else {
+                flagIsQ = false;
+                try {
+                    choosedItemNumber = Integer.parseInt(stringChoose);
+
+                    flagIsValidItemId = engine.checkIfThisValidItemId(choosedItemNumber);
+
+                    if (flagIsValidItemId)
+                    {
+                        flagIsValidItemId = engine.checkIfItemPriceIsNotZero(choosedItemNumber);
+                        if(!flagIsValidItemId)
+                        {
+                            System.out.println("This item is not sell in this store");
+                        }
+                    }
+
+                } catch (NumberFormatException e) {
+                    System.out.println("Please enter an integer, present ID of item");
+                }
+            }//else
+        }while (!flagIsValidItemId);
+
+        return (choosedItemNumber);
+    }
+
+
+    private String getFromUserValidChooseAmount(int itemId)
+    {
+
+        boolean flagIsValidItemAmount = true;//initialize not matter
+        String stringChooseAmount;
+
+        do {
+            System.out.println("Please enter amount of Item you would like to order");
+            Scanner scan = new Scanner(System.in);
+            stringChooseAmount = scan.nextLine();
+            flagIsValidItemAmount = checkIfIsValidAmountOfthisItem(stringChooseAmount, itemId);
+        } while (!flagIsValidItemAmount);
+
+        return (stringChooseAmount);
+    }
+
+    private boolean checkIfIsValidAmountOfthisItem(String choosedItemAmount, int itemId)
+    {
+        boolean flagIsValidAmount = true;
+        Item.ItemType itemType = engine.getItemTypeByID(itemId);
+
+        switch (itemType) {
+            case QUANTITY: {
+                try {
+                    int quantityOfItem = Integer.parseInt(choosedItemAmount);
+                    if(quantityOfItem <= 0) {
+                        flagIsValidAmount = false;
+                        System.out.println("You gave an negative amount or 0, please give an positive number.");
+                    }
+                    /////flagIsValidAmount = true;
+                } catch (NumberFormatException e1) {
+                    flagIsValidAmount = false;
+                    System.out.println("You must give an positive integer number, please try again");
+                }
+                break;
+            }
+            case WEIGHT: {
+                try {
+                    double weightOfItem = Double.parseDouble(choosedItemAmount);
+                    if(weightOfItem <= 0) {
+                        flagIsValidAmount = false;
+                        System.out.println("You gave an negative amount or 0, please give an positive number.");
+                    }
+                    /////flagIsValidAmount = true;
+                } catch (NumberFormatException e2) {
+                    flagIsValidAmount = false;
+                    System.out.println("You must give an positive decimal number, please try again");
+                }
+                break;
+            }
+        }
+        return (flagIsValidAmount);
+    }
 }
+
+
+
+
+
+
+

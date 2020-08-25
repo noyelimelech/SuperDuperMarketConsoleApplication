@@ -45,6 +45,11 @@ public class OrderQuantityItem extends OrderItem {
         itemInOrder.addAmountThatSold(quantity);
     }
 
+    @Override
+    public String getAmount() {
+        return String.valueOf(quantity);
+    }
+
 
 }
 
