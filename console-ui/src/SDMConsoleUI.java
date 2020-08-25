@@ -67,11 +67,16 @@ public class SDMConsoleUI
     //noy
     private void showAllItemsInAllStores(Store store) {
         engine.updateAllStoreItemsForSaleInCurrentStoreOrder(store);
+        int i=1;
 
 
-        for (StoreItem stItem : engine.getAllStoreItemsWithPriceForSpecificStore()) {
+        for (StoreItem stItem : engine.getAllStoreItemsWithPriceForSpecificStore())
+        {
+            System.out.println("##Item number: "+i+"##");
             showItemBasicData(stItem.getItem(), "", '1');
             System.out.println("    " + "4" + ".Price: " + stItem.getPrice());
+            System.out.println();
+            i++;
         }
     }
 
@@ -99,13 +104,14 @@ public class SDMConsoleUI
     private int getFromUserChooseStore() {
         boolean flagIsValidChoose;
         int idStoreChoose;
-
+        int i=1;
         do {
             System.out.println("Please select an id store from the stores below: ");
 
             for (Store st : engine.getAllStores()) {
-                System.out.println("\n");
-                showStoreBasicDetails(st);
+                System.out.println();
+                showStoreBasicDetails(st,i);
+                i++;
             }
 
             idStoreChoose = getChooseFromUser();
@@ -122,21 +128,6 @@ public class SDMConsoleUI
         while (!flagIsValidChoose);
 
         return (idStoreChoose);
-
-        /*
-        while (!flagIsValidChoose)
-        {
-            idStoreChoose=getChooseFromUser();
-            flagIsValidChoose=engine.CheckIfIsValidStoreId(idStoreChoose);
-            if (!flagIsValidChoose)
-            {
-                System.out.println("the id store is not correct, please try again ");
-            }
-        }
-        return(idStoreChoose);
-
-         */
-
     }
 
     //NOY
@@ -193,7 +184,8 @@ public class SDMConsoleUI
 
     }
 
-    private void showStoreBasicDetails(Store st) {
+    private void showStoreBasicDetails(Store st, int i) {
+        System.out.println("###STORE NUMBER "+i+"###");
         System.out.println("    ID:" + st.getId());
         System.out.println("    Name:" + st.getName());
         System.out.println("    PPK: " + st.getDeliveryPPK());
@@ -399,7 +391,7 @@ public class SDMConsoleUI
         System.out.println("Summary of order:");
         System.out.println("Order item:");
         for(OrderItem orderItem : order.getOrderItemCart().values()) {
-            System.out.println("\t###ORDER ITEM " + i++ + "###");
+            System.out.println("\t###ITEM " + i++ + "###");
             showOrderItem(orderItem);
         }
         System.out.println("Delivery Information:");
@@ -554,8 +546,9 @@ public class SDMConsoleUI
 
         System.out.println("All orders made in the system:");
         for(Order order : engine.getAllOrders()) {
-            System.out.println("###ORDER NUMBER " + i++);
+            System.out.println("###ORDER NUMBER " + i++ +"###");
             showOrder(order);
+            System.out.println();
         }
     }
 
