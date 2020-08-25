@@ -35,23 +35,29 @@ public class SDMConsoleUI
         if (choice == exitOption) {
             return true;
         }
-
-        switch (choice) {
-            case 1:
-                loadNewXML();
-                break;
-            case 2:
-                showAllStores();
-                break;
-            case 3:
-                showAllItems();
-                break;
-            case 4:
-                MakeNewOrder();
-                break;
-            case 5:
-                //TODO show all orders
-                break;
+        if(choice == 1) {
+            loadNewXML();
+        }
+        else {
+            if(engine.isXMLFileLoaded()){
+                switch (choice) {
+                    case 2:
+                        showAllStores();
+                        break;
+                    case 3:
+                        showAllItems();
+                        break;
+                    case 4:
+                        MakeNewOrder();
+                        break;
+                    case 5:
+                        showAllOrders();
+                        break;
+                }
+            }
+            else{
+                System.out.println("You must load an XML file before using feature from 2-5.");
+            }
         }
 
         return false;
@@ -288,15 +294,28 @@ public class SDMConsoleUI
         try {
             engine.updateAllStoresAndAllItems(filePath);
             System.out.println("XML file loaded successfully!");
-        } catch (FileNotFoundException ex) {
+        }
+        catch (FileNotFoundException ex) {
             System.out.println("ERROR: The file does not exist in the path given, please try again.");
-        } catch (FileNotEndWithXMLException ex) {
-            System.out.println("ERROR: The file you given is not an XML file, please make sure it ends with .xml and try again");
-        } catch (LocationIsOutOfBorderException ex) {
-            System.out.println("ERROR: The object of type " + ex.getLocatableType() +
-                    "with id of: " + ex.getId() + " is located out of allowed borders which are between "
-                    + ex.getMinBorder() + "to " + ex.getMaxBorder() + ".Please fix this ");
-        } catch (Exception ex) {
+        }
+        catch(FileNotEndWithXMLException ex) {
+            System.out.println("ERROR: The file you given is not an XML file, please make sure it ends with .xml and try again.");
+        }
+        catch(LocationIsOutOfBorderException ex) {
+            System.out.println("ERROR: The object of type " +  ex.getLocatableType()+
+                    " with id of: " + ex.getId() + " is located out of allowed borders which are between "
+                    + ex.getMinBorder() + "to " + ex.getMaxBorder() + ".Please fix this.");
+        }
+        catch(DuplicateStoreItemException ex) {
+            System.out.println("ERROR: The store item with ID of " + ex.getId() + " appears more than once in the XML file.");
+        }
+        catch(DuplicateItemException ex) {
+            System.out.println("ERROR: The item with ID of " + ex.getId() + " appears more than once in the XML file.");
+        }
+        catch(DuplicateStoreIDException ex) {
+            System.out.println("ERROR: The store with ID of " + ex.getId() + " appears more than once in the XML file");
+        }
+        catch(Exception ex) {
             System.out.println("ERROR: Unknown error has happen, the error message is: " + ex.getMessage());
         }
 
@@ -528,6 +547,26 @@ public class SDMConsoleUI
             }
         }
         return (flagIsValidAmount);
+    }
+
+    private void showAllOrders() {
+        int i = 1;
+
+        System.out.println("All orders made in the system:");
+        for(Order order : engine.getAllOrders()) {
+            System.out.println("###ORDER NUMBER " + i++);
+            showOrder(order);
+        }
+    }
+
+    private void showOrder(Order order) {
+        System.out.println("1.ID: " + order.getId());
+        System.out.println("2.Date: " + (new SimpleDateFormat("dd/MM-HH:mm")).format(order.getDate()));
+        System.out.println("3.Store order made from - ID: " + order.getStoreOrderMadeFrom().getId() + " name: " + order.getStoreOrderMadeFrom().getName());
+        System.out.println("4.Number of types of items in the order: " + order.getOrderItemCart().size() + " number items in order: " + order.getTotalItemsInOrder());
+        System.out.println("5.Total price of items in order: " + order.getPriceOfAllItems());
+        System.out.println("6.Price of delivery: " + order.getDeliveryPrice());
+        System.out.println("7.Total price of order: " + order.getTotalPrice());
     }
 }
 
