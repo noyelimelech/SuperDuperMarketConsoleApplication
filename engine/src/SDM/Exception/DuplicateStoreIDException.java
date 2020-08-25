@@ -8,6 +8,10 @@ public class DuplicateStoreIDException extends Exception
     {
         this.id=id;
     }
+
+    public int getId() {
+        return id;
+    }
 }
 
 

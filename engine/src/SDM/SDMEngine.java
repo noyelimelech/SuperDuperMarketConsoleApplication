@@ -16,6 +16,7 @@ public class SDMEngine {
     private List<Order> allOrders=new LinkedList<>();
     private Order currentOrder;
     private Map<Integer, StoreItem> allStoreItemsWithPriceForSpecificStore = new HashMap<>(); //private Map for storeItems to show to UI
+    private boolean xmlFileLoaded = false;
 
     public List<StoreItem> getAllStoreItemsWithPriceForSpecificStore() {
         return new ArrayList<>(allStoreItemsWithPriceForSpecificStore.values());
@@ -52,6 +53,7 @@ public class SDMEngine {
                 }
             }
         }
+        xmlFileLoaded = true;
 
 
     }
@@ -138,6 +140,14 @@ public class SDMEngine {
         currentOrder.completeOrder();
         allOrders.add(currentOrder);
         currentOrder = null;
+    }
+
+    public List<Order> getAllOrders() {
+        return allOrders;
+    }
+
+    public boolean isXMLFileLoaded() {
+        return xmlFileLoaded;
     }
 }
 
