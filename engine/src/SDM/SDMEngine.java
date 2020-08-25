@@ -13,7 +13,7 @@ public class SDMEngine {
     private Map<Integer, Store> allStores = new HashMap<>();
     private Map<Integer, Item> allItems = new HashMap<>();
     private Map<Integer, Costumer> allCostumers = new HashMap<>();
-    private List<Order> allOrders;
+    private List<Order> allOrders=new LinkedList<>();
     private Order currentOrder;
     private Map<Integer, StoreItem> allStoreItemsWithPriceForSpecificStore = new HashMap<>(); //private Map for storeItems to show to UI
 
@@ -79,16 +79,18 @@ public class SDMEngine {
 
     //Noy's job
     public void createNewOrder(Costumer costumerEX1, Date dateOrder, Store store) {
-        currentOrder.makeNewOrder(costumerEX1, dateOrder, this.allStores.get(store));
+        currentOrder = Order.makeNewOrder(costumerEX1, dateOrder, store);
     }
 
     //noy job
-    public void updateAllStoreItemsForSaleInCurrentStoreOrder() {
+    public void updateAllStoreItemsForSaleInCurrentStoreOrder(Store store) {
         for (Item item : allItems.values()) {
             StoreItem storeItem = new StoreItem();
             storeItem.setItem(item);
-            storeItem.setStore(currentOrder.getStoreOrderMadeFrom());
-            int priceOfItem = getPriceOfItemInThisStoreORZero(item.getId(), currentOrder.getStoreOrderMadeFrom());
+            //currentOrder.setStoreOrderMadeFrom(store);
+            storeItem.setStore(store);
+            int priceOfItem = getPriceOfItemInThisStoreORZero(item.getId(),store);
+            storeItem.setPrice(priceOfItem);
             allStoreItemsWithPriceForSpecificStore.put(item.getId(), storeItem);
         }
     }
@@ -97,8 +99,8 @@ public class SDMEngine {
     private int getPriceOfItemInThisStoreORZero(int itemId, Store store) {
         int resPrice = 0;
 
-        if (!(store.getItemsThatSellInThisStore().containsKey(itemId))) {
-            resPrice = currentOrder.getStoreOrderMadeFrom().getItemsThatSellInThisStore().get(itemId).getPrice();
+        if (store.getItemsThatSellInThisStore().containsKey(itemId)) {
+            resPrice = store.getItemsThatSellInThisStore().get(itemId).getPrice();
         }
 
         return resPrice;
