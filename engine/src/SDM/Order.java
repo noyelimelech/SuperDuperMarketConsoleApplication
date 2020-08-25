@@ -21,6 +21,7 @@ public class Order
         this.date = date;
         this.id = idCounter;
         this.storeOrderMadeFrom = storeOrderMadeFrom;
+        deliveryPrice = storeOrderMadeFrom.getDeliveryPPK() * distanceBetweenCostumerAndStore();
         orderItemCart = new HashMap<>();
     }
 
@@ -45,7 +46,6 @@ public class Order
 
     public void completeOrder() {
         idCounter++;
-        deliveryPrice = storeOrderMadeFrom.getDeliveryPPK() * distanceBetweenCostumerAndStore();
         priceOfAllItems = calculatePriceOfOrderItems();
         totalPrice = priceOfAllItems + deliveryPrice;
         orderItemCart.forEach((orderItemID, orderItem) -> {
@@ -127,4 +127,5 @@ public class Order
         }
         return (totalItems);
     }
+
 }

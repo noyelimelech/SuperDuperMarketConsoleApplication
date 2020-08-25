@@ -1,12 +1,8 @@
 import SDM.*;
-import SDM.Exception.FileNotEndWithXMLException;
-import SDM.Exception.InvalidIdStoreChooseException;
-import SDM.Exception.LocationIsOutOfBorderException;
-import SDM.Exception.NegativeAmountOfItemInException;
+import SDM.Exception.*;
 
 import java.awt.*;
 import java.io.FileNotFoundException;
-import java.sql.SQLOutput;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -64,11 +60,12 @@ public class SDMConsoleUI
 
     //noy
     private void showAllItemsInAllStores(Store store) {
-        engine.updateAllStoreItemsForSaleInCurrentStoreOrder();
+        engine.updateAllStoreItemsForSaleInCurrentStoreOrder(store);
+
 
         for (StoreItem stItem : engine.getAllStoreItemsWithPriceForSpecificStore()) {
             showItemBasicData(stItem.getItem(), "", '1');
-            System.out.println("    " + "4" + ".ID: " + stItem.getPrice());
+            System.out.println("    " + "4" + ".Price: " + stItem.getPrice());
         }
     }
 
@@ -139,33 +136,55 @@ public class SDMConsoleUI
     //NOY
     private int getChooseFromUser() {
         Scanner scan = new Scanner(System.in);
-        int choose = scan.nextInt();
-        return (choose);
+        String choose = scan.nextLine();
+        int chooseNum=0;//miss mining
+        boolean flagIsValidNumber=true;
+
+
+        do{
+            try
+            {
+                chooseNum=Integer.parseInt(choose);
+            }
+            catch (NumberFormatException e)
+            {
+                flagIsValidNumber=false;
+                System.out.println("Please give an integer");
+            }
+
+        }while (!flagIsValidNumber);
+
+
+        return (chooseNum);
     }
 
     //NOY
     private Date getValidDateFromCostumer() {
         Scanner scanner = new Scanner(System.in);
-
-        boolean flagIsValidDate = true;
+        Date date2 = null;
+        boolean flagIsValidDate = false;
 
         do {
             System.out.println("Enter the Date ,in format: dd/MM-HH:mm");
             String date = scanner.next();
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM-HH:mm");
-            Date date2 = null;
+
 
             try {
                 //Parsing the String
                 date2 = dateFormat.parse(date);
+                flagIsValidDate=true;
             } catch (ParseException e) {
                 System.out.println("the date is not in the flowing format:  dd/MM-HH:mm \n please try again");
                 flagIsValidDate = false;
             }
 
-            return (date2);
+
         }
         while (!flagIsValidDate);
+        return (date2);
+
+
     }
 
     private void showStoreBasicDetails(Store st) {
@@ -327,7 +346,7 @@ public class SDMConsoleUI
         showOrderSummary(engine.getCurrentOrder());
         System.out.println("Do you want to confirm the order? (Y/N)");
         String confirmationChoice = getValidOrderConfirmation();
-        if(confirmationChoice.toLowerCase() == "y") {
+        if(confirmationChoice.toLowerCase().equals("y")) {
             engine.completeCurrentOrder();
             System.out.println("Order confirmed, thank you for using our SDM system.");
         }
@@ -338,10 +357,13 @@ public class SDMConsoleUI
 
     private String getValidOrderConfirmation() {
         Scanner inputScanner = new Scanner(System.in);
-        String input = inputScanner.nextLine().toLowerCase();
+        String input;
         boolean inputValid = false;
         do {
-            if(input == "y" || input == "n") {
+
+            input = inputScanner.nextLine().toLowerCase();
+
+            if(input.equals("y") || input.equals("n")) {
                 inputValid = true;
             }
             else {
@@ -361,7 +383,10 @@ public class SDMConsoleUI
             System.out.println("\t###ORDER ITEM " + i++ + "###");
             showOrderItem(orderItem);
         }
-        System.out.println(String.format("Delivery price: %.2f",order.getDeliveryPrice()));
+        System.out.println("Delivery Information:");
+        System.out.println(String.format("\tDistance of costumer from store: %.2f", order.distanceBetweenCostumerAndStore()));
+        System.out.println("\tStore Delivery PPK: " + order.getStoreOrderMadeFrom().getDeliveryPPK());
+        System.out.println(String.format("\tDelivery price: %.2f",order.getDeliveryPrice()));
     }
 
     private void showOrderItem(OrderItem orderItem) {
@@ -373,33 +398,44 @@ public class SDMConsoleUI
         System.out.println("\t\t6.Total price in order: " + orderItem.getTotalPrice());
     }
 
-    private void getFromUserItemsAndAmountAndUpdateTheOrder(int choosedStore)
-    {
-        int choosedItem;
-        Boolean flagIsQ = new Boolean(false);
+    private void getFromUserItemsAndAmountAndUpdateTheOrder(int choosedStore){
+        int choosedItem = 0;//no mining of this initialize
+        boolean flagIsQ=false;
+
         do {
             showAllItemsInAllStores(engine.getAllStoresMap().get(choosedStore));
-            choosedItem = getFromUserValidItemId(flagIsQ);
+            try
+            {
+                choosedItem = getFromUserValidItemId();
+            }
+            catch (QPressedException e)
+            {
+                System.out.println("bottom q is pushed, Preparing the order details");
+                flagIsQ=true;
+            }
+
             if (!flagIsQ) {
-                String choosedAmountOfItem = getFromUserValidChooseAmount(choosedItem);  //להשתמש בפונקציה שדניאל בטח כתב שמטפלת בקליטת כמות שלילית
+
+                String choosedAmountOfItem = getFromUserValidChooseAmount(choosedItem);
                 try {
                     engine.addItemToCurrentOrder(choosedItem, choosedAmountOfItem);
+
                 }
                 catch (NegativeAmountOfItemInException ex) {
                     System.out.println("ERROR: Unknown error happend, probably tried to add an amount that made the total amount negative" +
                             " amount tried to add " + ex.getAmountTriedToAdd() + " amount in the order " + ex.getCurrentAmount());
+
                 }
+
             }
-            else //if (flagIsQ)
-            {
-                System.out.println("bottom q is pushed, Preparing the order");
-            }
+
         }
         while (!flagIsQ);
     }
 
-    private int getFromUserValidItemId(Boolean flagIsQ)
+    private int getFromUserValidItemId()throws QPressedException
     {
+        //boolean flagIsQ;
         boolean flagIsValidItemId=false;
         int choosedItemNumber = 0;
 
@@ -407,14 +443,15 @@ public class SDMConsoleUI
             System.out.println("Please enter Item Id you would like to order");
             Scanner scan = new Scanner(System.in);
             String stringChoose = scan.nextLine();
-            if (stringChoose.toLowerCase() == "q")
+            if (stringChoose.toLowerCase().equals("q"))
             {
-                flagIsQ = true;
-                return (0);
+                //flagIsQ = true;
+                //return (0);
+                throw(new QPressedException());
             }
 
             else {
-                flagIsQ = false;
+                //flagIsQ = false;
                 try {
                     choosedItemNumber = Integer.parseInt(stringChoose);
 
@@ -430,7 +467,7 @@ public class SDMConsoleUI
                     }
 
                 } catch (NumberFormatException e) {
-                    System.out.println("Please enter an integer, present ID of item");
+                    System.out.println("Invalid ID Please try again ");
                 }
             }//else
         }while (!flagIsValidItemId);
