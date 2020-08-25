@@ -8,11 +8,11 @@ public class Order
 {
     private static int idCounter = 1;
     private int id;
-    private Map<Integer, OrderItem> orderList;
+    private Map<Integer, OrderItem> orderItemCart;
     private Store storeOrderMadeFrom;
-    private double deliveryPrice;
     private Costumer costumer;
     private Date date;
+    private double deliveryPrice;
     private double priceOfAllItems;
     private double totalPrice;
 
@@ -21,7 +21,7 @@ public class Order
         this.date = date;
         this.id = idCounter;
         this.storeOrderMadeFrom = storeOrderMadeFrom;
-        orderList = new HashMap<>();
+        orderItemCart = new HashMap<>();
     }
 
     public static Order makeNewOrder(Costumer costumer, Date date, Store storeOrderMadeFrom) {
@@ -33,13 +33,13 @@ public class Order
     }
 
     public void addItemToOrder(StoreItem itemToAdd, String amountToAdd) throws NegativeAmountOfItemInException {
-        if(orderList.containsKey(itemToAdd.getItem().getId())) {
-            orderList.get(itemToAdd.getItem().getId()).addAmount(amountToAdd);
+        if(orderItemCart.containsKey(itemToAdd.getItem().getId())) {
+            orderItemCart.get(itemToAdd.getItem().getId()).addAmount(amountToAdd);
         }
         else {
             OrderItem newItemInOrder = OrderItem.Factory.makeNewOrderItem(itemToAdd);
             newItemInOrder.addAmount(amountToAdd);
-            orderList.put(itemToAdd.getItem().getId(), newItemInOrder);
+            orderItemCart.put(itemToAdd.getItem().getId(), newItemInOrder);
         }
     }
 
@@ -48,7 +48,7 @@ public class Order
         deliveryPrice = storeOrderMadeFrom.getDeliveryPPK() * distanceBetweenCostumerAndStore();
         priceOfAllItems = calculatePriceOfOrderItems();
         totalPrice = priceOfAllItems + deliveryPrice;
-        orderList.forEach((orderItemID, orderItem) -> {
+        orderItemCart.forEach((orderItemID, orderItem) -> {
             try {
                 orderItem.updateItemAmountSold();
                 orderItem.updateStoreItemAmountSold();
@@ -56,10 +56,11 @@ public class Order
                 orderItem.clearAmount();
             }
         });
+        storeOrderMadeFrom.getOrders().add(this);
     }
 
     private double calculatePriceOfOrderItems() {
-        return orderList.values().stream().mapToDouble(OrderItem::getTotalPrice).sum();
+        return orderItemCart.values().stream().mapToDouble(OrderItem::getTotalPrice).sum();
     }
 
     public double distanceBetweenCostumerAndStore() {
@@ -71,8 +72,8 @@ public class Order
         return id;
     }
 
-    public Map<Integer, OrderItem> getOrderList() {
-        return orderList;
+    public Map<Integer, OrderItem> getOrderItemCart() {
+        return orderItemCart;
     }
 
     public Store getStoreOrderMadeFrom() {
@@ -102,12 +103,12 @@ public class Order
         int totalItems=0;
 
         /*
-        for (OrderItem orderitem:orderList.values())
+        for (OrderItem orderitem:orderItemCart.values())
         {
 
          */
 
-        for (Map.Entry<Integer, OrderItem> iterator : orderList.entrySet())
+        for (Map.Entry<Integer, OrderItem> iterator : orderItemCart.entrySet())
         {
 
             Integer key = iterator.getKey();

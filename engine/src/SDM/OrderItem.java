@@ -45,4 +45,6 @@ public abstract class OrderItem {
     public StoreItem getItemInOrder() {
         return itemInOrder;
     }
+
+    public abstract String getAmount();
 }
