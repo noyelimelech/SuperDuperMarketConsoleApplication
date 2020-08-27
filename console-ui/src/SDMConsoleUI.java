@@ -447,7 +447,7 @@ public class SDMConsoleUI
         System.out.println("\t\t2.Name: " + orderItem.getItemInOrder().getItem().getName());
         System.out.println("\t\t3.Type: " + orderItem.getItemInOrder().getItem().getType());
         System.out.println("\t\t4.Price: " + orderItem.getItemInOrder().getPrice());
-        System.out.println(String.format("\t\t5.Amount in order: %.2f", orderItem.getAmount()));
+        System.out.println(String.format("\t\t5.Amount in order: %.2f", Double.parseDouble(orderItem.getAmount())));
         System.out.println(String.format("\t\t6.Total price in order: %.2f", orderItem.getTotalPrice()));
     }
 
