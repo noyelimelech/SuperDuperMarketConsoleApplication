@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +30,7 @@ public class XMLHandlerBaseOnSchema
     private String JAXB_XML_PACKAGE_NAME="SDM.jaxb.schema.generated";
 
 
-    public void updateStoresAndItems(String stPath) throws FileNotFoundException, JAXBException, FileNotEndWithXMLException, DuplicateItemException, LocationIsOutOfBorderException, DuplicateStoreIDException, DuplicateStoreItemException
-    {
+    public void updateStoresAndItems(String stPath) throws FileNotFoundException, JAXBException, FileNotEndWithXMLException, DuplicateItemException, LocationIsOutOfBorderException, DuplicateStoreIDException, DuplicateStoreItemException, TryingToGivePriceOfItemWhichIDNotExistException, TryingToGiveDiffrentPricesForSameStoreItemException {
         SuperDuperMarketDescriptor sdmDescriptor=this.fromStringPathToDescriptor(stPath);
         parseFromSDMItemToItem(sdmDescriptor);
         parseFromSDMStoresToStores(sdmDescriptor);
@@ -37,6 +38,10 @@ public class XMLHandlerBaseOnSchema
 
     private SuperDuperMarketDescriptor fromStringPathToDescriptor(String inpPath) throws FileNotFoundException, JAXBException, FileNotEndWithXMLException
     {
+        File inputFile = new File(inpPath);
+        if(!inputFile.exists()) {
+            throw new FileNotFoundException();
+        }
 
         if(inpPath.length()-4!=(inpPath.toLowerCase().lastIndexOf(".xml")))
         {
@@ -86,7 +91,7 @@ public class XMLHandlerBaseOnSchema
     }
 
 
-    private void parseFromSDMStoresToStores(SuperDuperMarketDescriptor sdmObj) throws DuplicateStoreIDException, DuplicateStoreItemException, LocationIsOutOfBorderException {
+    private void parseFromSDMStoresToStores(SuperDuperMarketDescriptor sdmObj) throws DuplicateStoreIDException, DuplicateStoreItemException, LocationIsOutOfBorderException, TryingToGivePriceOfItemWhichIDNotExistException, TryingToGiveDiffrentPricesForSameStoreItemException {
         List<SDMStore> sdmStores=  sdmObj.getSDMStores().getSDMStore();
         this.stores=new ArrayList<>();
         Store st;
@@ -129,8 +134,7 @@ public class XMLHandlerBaseOnSchema
  */
 
     //convert sdmPrices to storeItem
-    private Map<Integer, StoreItem> getStorItemesFromsdmPrices(SDMStore sdmSt, Store st) throws DuplicateStoreItemException
-    {
+    private Map<Integer, StoreItem> getStorItemesFromsdmPrices(SDMStore sdmSt, Store st) throws DuplicateStoreItemException, TryingToGivePriceOfItemWhichIDNotExistException, TryingToGiveDiffrentPricesForSameStoreItemException {
         List<SDMSell> listSDMSell =sdmSt.getSDMPrices().getSDMSell();
         Map<Integer,StoreItem> retMapStoreItems=new HashMap<>();
         StoreItem sti;
@@ -139,14 +143,25 @@ public class XMLHandlerBaseOnSchema
         {
             if(retMapStoreItems.containsKey(sdmSell.getItemId()))
             {
-                throw (new DuplicateStoreItemException(sdmSell.getItemId()));
+               throw (new DuplicateStoreItemException(sdmSell.getItemId()));
             }
             
-            sti=new StoreItem();
-            sti.setPrice(sdmSell.getPrice());
-            sti.setStore(st);
-            sti.setItem(this.items.get(sdmSell.getItemId()));
-            retMapStoreItems.put(sti.getItem().getId(),sti);
+
+            //////NOY HADASH
+            if(this.items.containsKey(sdmSell.getItemId()))
+            {
+                sti=new StoreItem();
+                if (sti.getPrice()!=0)
+                {
+                    throw (new TryingToGiveDiffrentPricesForSameStoreItemException(st.getId()));
+                }
+                sti.setPrice(sdmSell.getPrice());
+                sti.setStore(st);
+                sti.setItem(this.items.get(sdmSell.getItemId()));
+                retMapStoreItems.put(sti.getItem().getId(),sti);
+            }
+            else
+                throw (new TryingToGivePriceOfItemWhichIDNotExistException(sdmSell.getItemId()));
         }
         return (retMapStoreItems);
     }

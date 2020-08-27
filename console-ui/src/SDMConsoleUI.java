@@ -74,7 +74,8 @@ public class SDMConsoleUI
         {
             System.out.println("##Item number: "+i+"##");
             showItemBasicData(stItem.getItem(), "", '1');
-            System.out.println("    " + "4" + ".Price: " + stItem.getPrice());
+            System.out.println("    " + "4." +
+                            (stItem.getPrice() == 0 ? "This store doesnt sell this item" : ("Price: " + stItem.getPrice())));
             System.out.println();
             i++;
         }
@@ -94,6 +95,10 @@ public class SDMConsoleUI
             costumerLocation = new Location(new Point(x, y));
 
             flagIsValidCostumerLocation = engine.checkIfThisLocationInUsedOfStore(costumerLocation);
+            if(!flagIsValidCostumerLocation) {
+                System.out.println("This location is already used by another store, you cant order if you are located in same location as " +
+                        "store, please try again");
+            }
         }
         while (!flagIsValidCostumerLocation);
 
@@ -142,11 +147,13 @@ public class SDMConsoleUI
             try
             {
                 chooseNum=Integer.parseInt(choose);
+                flagIsValidNumber = true;
             }
             catch (NumberFormatException e)
             {
                 flagIsValidNumber=false;
                 System.out.println("Please give an integer");
+                choose = scan.nextLine();
             }
 
         }while (!flagIsValidNumber);
@@ -165,7 +172,7 @@ public class SDMConsoleUI
             System.out.println("Enter the Date ,in format: dd/MM-HH:mm");
             String date = scanner.next();
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM-HH:mm");
-
+            dateFormat.setLenient(false);
 
             try {
                 //Parsing the String
@@ -205,9 +212,13 @@ public class SDMConsoleUI
     private void showItem(Item item) {
         showItemBasicData(item, "", '1');
         System.out.println("    4.Number of stores sell this item: " + item.getStoresSellThisItem().size());
-        System.out.println("    5.Average price of this item: " + item.getAveragePrice());
-        System.out.println("    6.Total amount that has been sold: " + item.getTotalAmountSoldOnAllStores() + (item.getType() == Item.ItemType.QUANTITY ? " pieces" : " KG"));
 
+        //System.out.println("    5.Average price of this item: " +item.getAveragePrice());
+        double avgPrice=item.getAveragePrice();
+        avgPrice = Math.floor(avgPrice * 100) / 100;
+        System.out.println("    5.Average price of this item: " +avgPrice);
+
+        System.out.println("    6.Total amount that has been sold: " + item.getTotalAmountSoldOnAllStores() + (item.getType() == Item.ItemType.QUANTITY ? " pieces" : " KG"));
     }
 
     private void showAllStores() {
@@ -242,22 +253,22 @@ public class SDMConsoleUI
             System.out.println("This store hadn't made any orders yet.");
         } else {
             for (Order order : store.getOrders()) {
-                System.out.print(i.getAndIncrement() + ".");
+                System.out.println("\t##ORDER NUMBER " + i.getAndIncrement() + "##");
                 showOrderInShowStoreChoice(order);
             }
         }
         System.out.println("5.PPK: " + store.getDeliveryPPK());
-        System.out.println("6.Amount of money got only for deliveries: " + store.getTotalAmountForDeliveries()); //total amount for delivery should be a method in store, needed to be added..
+        System.out.println(String.format("6.Amount of money got only for deliveries: %.2f", store.getTotalAmountForDeliveries()));
     }
 
 
     private void showOrderInShowStoreChoice(Order order) {
 
-        System.out.println("a.Date of order: " + order.getDate());
-        System.out.println("b.Total items: " + order.getTotalItemsInOrder());//Noy's job---> method in Order "getTotalItemsInOrder".
-        System.out.println("c.Total price of all items: " + order.getPriceOfAllItems());
-        System.out.println("d.Delivery price: " + order.getDeliveryPrice());
-        System.out.println("e.Total order price: " + order.getDeliveryPrice() + order.getPriceOfAllItems());
+        System.out.println("\t\ta.Date of order: " + (new SimpleDateFormat("dd/MM-HH:mm")).format(order.getDate()));
+        System.out.println("\t\tb.Total items: " + order.getTotalItemsInOrder());//Noy's job---> method in Order "getTotalItemsInOrder".
+        System.out.println(String.format("\t\tc.Total price of all items: %.2f", order.getPriceOfAllItems()));
+        System.out.println(String.format("\t\td.Delivery price: %.2f", order.getDeliveryPrice()));
+        System.out.println(String.format("\t\te.Total order price: %.2f", order.getTotalPrice()));
     }
 
     private void showStoreItem(StoreItem storeItem) {
@@ -268,7 +279,17 @@ public class SDMConsoleUI
             System.out.println('\t' + "    d.price for 1kg is: " + storeItem.getPrice());
         }
 
-        System.out.println('\t' + "    e.Total sold: " + storeItem.getTotalAmountSoldInThisStore());
+
+        //System.out.println('\t' + "    e.Total sold: " + storeItem.getTotalAmountSoldInThisStore());
+        double amountThatSold=storeItem.getTotalAmountSoldInThisStore();
+        if(amountThatSold==0)
+        {
+            System.out.println('\t' + "    e.Total sold: 0 ");
+        }
+        else{
+            System.out.println('\t' + String.format("    e.Total sold: %.2f", amountThatSold));
+        }
+
     }
 
     void showItemBasicData(Item itemToShow, String linePrefix, char countingPrefix) {
@@ -304,10 +325,27 @@ public class SDMConsoleUI
         catch(DuplicateItemException ex) {
             System.out.println("ERROR: The item with ID of " + ex.getId() + " appears more than once in the XML file.");
         }
+        catch (TryingToGiveDiffrentPricesForSameStoreItemException e)
+        {
+            System.out.println("ERROR: The file has store with ID" + e.getStoreId() + "that try to give an item price multiple time. ");
+        }
+
+        catch (TryingToGivePriceOfItemWhichIDNotExistException ex)
+        {
+            System.out.println("ERROR: The file has store which trying to give a price of item which is ID "+ex.getId()+" does not exist");
+        }
+
         catch(DuplicateStoreIDException ex) {
             System.out.println("ERROR: The store with ID of " + ex.getId() + " appears more than once in the XML file");
         }
-        catch(Exception ex) {
+        catch (ItemNoOneSellException ex) {
+            System.out.println("ERROR: The item with ID " + ex.getId() + " doesnt sold by any store.");
+        }
+        catch (StoreWithNoItemException ex) {
+            System.out.println("ERROR: The store with ID " + ex.getId() + " doesnt sell any items");
+        }
+        catch(Exception ex)
+        {
             System.out.println("ERROR: Unknown error has happen, the error message is: " + ex.getMessage());
         }
 
@@ -354,15 +392,19 @@ public class SDMConsoleUI
         engine.createNewOrder(costumerEX1, dateOrder, engine.getAllStoresMap().get(chooseStore));
 
         getFromUserItemsAndAmountAndUpdateTheOrder(chooseStore);
-        showOrderSummary(engine.getCurrentOrder());
-        System.out.println("Do you want to confirm the order? (Y/N)");
-        String confirmationChoice = getValidOrderConfirmation();
-        if(confirmationChoice.toLowerCase().equals("y")) {
-            engine.completeCurrentOrder();
-            System.out.println("Order confirmed, thank you for using our SDM system.");
+        if(engine.getCurrentOrder().isEmpty()) {
+            System.out.println("You have not added any item to your order, going back to main menu.");
         }
         else {
-            System.out.println("Order canceled, hope to see you waisting your money on us at other time");
+            showOrderSummary(engine.getCurrentOrder());
+            System.out.println("Do you want to confirm the order? (Y/N)");
+            String confirmationChoice = getValidOrderConfirmation();
+            if (confirmationChoice.toLowerCase().equals("y")) {
+                engine.completeCurrentOrder();
+                System.out.println("Order confirmed, thank you for using our SDM system.");
+            } else {
+                System.out.println("Order canceled, hope to see you waisting your money on us at other time");
+            }
         }
     }
 
@@ -405,8 +447,8 @@ public class SDMConsoleUI
         System.out.println("\t\t2.Name: " + orderItem.getItemInOrder().getItem().getName());
         System.out.println("\t\t3.Type: " + orderItem.getItemInOrder().getItem().getType());
         System.out.println("\t\t4.Price: " + orderItem.getItemInOrder().getPrice());
-        System.out.println("\t\t5.Amount in order: " + orderItem.getAmount());
-        System.out.println("\t\t6.Total price in order: " + orderItem.getTotalPrice());
+        System.out.println(String.format("\t\t5.Amount in order: %.2f", orderItem.getAmount()));
+        System.out.println(String.format("\t\t6.Total price in order: %.2f", orderItem.getTotalPrice()));
     }
 
     private void getFromUserItemsAndAmountAndUpdateTheOrder(int choosedStore){
@@ -543,12 +585,16 @@ public class SDMConsoleUI
 
     private void showAllOrders() {
         int i = 1;
-
-        System.out.println("All orders made in the system:");
-        for(Order order : engine.getAllOrders()) {
-            System.out.println("###ORDER NUMBER " + i++ +"###");
-            showOrder(order);
-            System.out.println();
+        if(engine.getAllOrders().size() == 0) {
+            System.out.println("No orders have been made yet, go and make the first one!");
+        }
+        else {
+            System.out.println("All orders made in the system:");
+            for (Order order : engine.getAllOrders()) {
+                System.out.println("###ORDER NUMBER " + i++ + "###");
+                showOrder(order);
+                System.out.println();
+            }
         }
     }
 
@@ -556,16 +602,9 @@ public class SDMConsoleUI
         System.out.println("1.ID: " + order.getId());
         System.out.println("2.Date: " + (new SimpleDateFormat("dd/MM-HH:mm")).format(order.getDate()));
         System.out.println("3.Store order made from - ID: " + order.getStoreOrderMadeFrom().getId() + " name: " + order.getStoreOrderMadeFrom().getName());
-        System.out.println("4.Number of types of items in the order: " + order.getOrderItemCart().size() + " number items in order: " + order.getTotalItemsInOrder());
-        System.out.println("5.Total price of items in order: " + order.getPriceOfAllItems());
-        System.out.println("6.Price of delivery: " + order.getDeliveryPrice());
-        System.out.println("7.Total price of order: " + order.getTotalPrice());
+        System.out.println("4.Number of types of items in the order: " + order.getOrderItemCart().size() + ". AND number items in order: " + order.getTotalItemsInOrder());
+        System.out.println(String.format("5.Total price of items in order: %.2f", order.getPriceOfAllItems()));
+        System.out.println(String.format("6.Price of delivery: %.2f", order.getDeliveryPrice()));
+        System.out.println(String.format("7.Total price of order: %.2f", order.getTotalPrice()));
     }
 }
-
-
-
-
-
-
-

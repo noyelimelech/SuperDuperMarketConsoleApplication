@@ -3,17 +3,16 @@ package SDM;
 import SDM.Exception.*;
 import SDM.jaxb.schema.XMLHandlerBaseOnSchema;
 
+import javax.print.attribute.HashPrintServiceAttributeSet;
 import javax.xml.bind.JAXBException;
 import java.io.FileNotFoundException;
 import java.util.*;
-
-import static SDM.Item.ItemType.QUANTITY;
 
 public class SDMEngine {
     private Map<Integer, Store> allStores = new HashMap<>();
     private Map<Integer, Item> allItems = new HashMap<>();
     private Map<Integer, Costumer> allCostumers = new HashMap<>();
-    private List<Order> allOrders=new LinkedList<>();
+    private List<Order> allOrders;
     private Order currentOrder;
     private Map<Integer, StoreItem> allStoreItemsWithPriceForSpecificStore = new HashMap<>(); //private Map for storeItems to show to UI
     private boolean xmlFileLoaded = false;
@@ -34,28 +33,51 @@ public class SDMEngine {
         return new ArrayList<>(allItems.values());
     }
 
-    public void updateAllStoresAndAllItems(String stPath) throws DuplicateStoreIDException, DuplicateStoreItemException, LocationIsOutOfBorderException, JAXBException, FileNotFoundException, DuplicateItemException, FileNotEndWithXMLException {
+    public void updateAllStoresAndAllItems(String stPath) throws DuplicateStoreIDException, DuplicateStoreItemException, LocationIsOutOfBorderException, JAXBException, FileNotFoundException, DuplicateItemException, FileNotEndWithXMLException, TryingToGivePriceOfItemWhichIDNotExistException, TryingToGiveDiffrentPricesForSameStoreItemException, ItemNoOneSellException, StoreWithNoItemException {
+        Map<Integer, Item> tempAllItems = new HashMap<>();
+        Map<Integer, Store> tempAllStores = new HashMap<>();
+
         XMLHandlerBaseOnSchema xmlHandler = new XMLHandlerBaseOnSchema();
         xmlHandler.updateStoresAndItems(stPath);
 
-        this.allItems = xmlHandler.getItems();
+        tempAllItems = xmlHandler.getItems();
 
         //convert List of store to Map of<int id,Store)
         for (Store st : xmlHandler.getStores()) {
-            this.allStores.put(st.getId(), st);
+            tempAllStores.put(st.getId(), st);
         }
 
         ////////////////////////////Noy's job
-        for (Item item : this.allItems.values()) {
-            for (Store st : allStores.values()) {
+        for (Item item : tempAllItems.values()) {
+            for (Store st : tempAllStores.values()) {
                 if (st.getItemsThatSellInThisStore().containsKey(item.getId())) {
                     item.setStoresSellThisItem(st);
                 }
             }
         }
+
+        verifyEveryItemSoldByAtLeastOneStore(tempAllItems);
+        verifyEveryStoreSellAtLeastOneItem(tempAllStores);
         xmlFileLoaded = true;
+        allStores = tempAllStores;
+        allItems = tempAllItems;
+        allOrders = new LinkedList<>();
+    }
 
+    private void verifyEveryStoreSellAtLeastOneItem(Map<Integer, Store> tempAllStores) throws StoreWithNoItemException {
+        for(Store store : tempAllStores.values()) {
+            if(store.getItemsThatSellInThisStore().size() == 0) {
+                throw new StoreWithNoItemException(store.getId());
+            }
+        }
+    }
 
+    private void verifyEveryItemSoldByAtLeastOneStore(Map<Integer, Item> tempAllItems) throws ItemNoOneSellException {
+        for(Item item : tempAllItems.values()) {
+            if(item.getStoresSellThisItem().size() == 0) {
+                throw new ItemNoOneSellException(item.getId());
+            }
+        }
     }
 
     public void CheckIfIsValidStoreId(int storeId) throws InvalidIdStoreChooseException {
@@ -70,9 +92,8 @@ public class SDMEngine {
         boolean flagIsValidCostumerLocation = true;
 
         for (Store st : this.getAllStores()) {
-            if (st.getLocation() == costumerLocationToCheck)
+            if (st.getLocation().equals(costumerLocationToCheck))
                 flagIsValidCostumerLocation = false;
-
         }
         return flagIsValidCostumerLocation;
 
