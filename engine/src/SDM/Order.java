@@ -128,4 +128,7 @@ public class Order
         return (totalItems);
     }
 
+    public boolean isEmpty() {
+        return orderItemCart.size() == 0;
+    }
 }
