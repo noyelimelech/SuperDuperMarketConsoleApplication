@@ -5,12 +5,9 @@ import SDM.Exception.NegativeAmountOfItemInException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Item
-{
+public class Item {
 
-
-    public enum ItemType
-    {
+    public enum ItemType {
         QUANTITY,WEIGHT
     }
 
@@ -20,7 +17,14 @@ public class Item
     private Map<Integer, Store> storesSellThisItem;
     private double totalAmountSoldOnAllStores = 0;
 
+    public Item(int id, String name)
+    {
+        this.id = id;
+        this.name =name;
+        this.storesSellThisItem=new HashMap<>();
+        //checkAndUpdateItemType(purchaseCategory);
 
+    }
 
     public int getId() {
         return id;
@@ -53,15 +57,6 @@ public class Item
     public void setStoresSellThisItem(Store st)
     {
         this.storesSellThisItem.put(st.getId(),st);
-    }
-
-    public Item(int id, String name)
-    {
-        this.id = id;
-        this.name =name;
-        this.storesSellThisItem=new HashMap<>();
-        //checkAndUpdateItemType(purchaseCategory);
-
     }
 
     public void checkAndUpdateItemType(String purchaseCategory)

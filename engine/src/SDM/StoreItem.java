@@ -12,8 +12,6 @@ public class StoreItem
     private Store store;
     private double totalAmountSoldInThisStore = 0;
 
-    //constracture that call item constracture;?
-
     public double getTotalAmountSoldInThisStore() {
         return totalAmountSoldInThisStore;
     }

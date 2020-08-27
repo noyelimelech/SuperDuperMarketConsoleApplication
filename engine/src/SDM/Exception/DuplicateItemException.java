@@ -2,7 +2,7 @@ package SDM.Exception;
 
 public class DuplicateItemException extends Exception
 {
-    int id;
+    private int id;
 
     public DuplicateItemException(int id)
     {
