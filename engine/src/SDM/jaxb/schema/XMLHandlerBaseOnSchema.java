@@ -15,8 +15,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,15 +25,22 @@ public class XMLHandlerBaseOnSchema
     private List<Store> stores = null;
     private Map<Integer,Item> items =null;
 
-    private String JAXB_XML_PACKAGE_NAME="SDM.jaxb.schema.generated";
 
+    public List<Store> getStores()
+    {
+        return stores;
+    }
 
-    public void updateStoresAndItems(String stPath) throws FileNotFoundException, JAXBException, FileNotEndWithXMLException, DuplicateItemException, LocationIsOutOfBorderException, DuplicateStoreIDException, DuplicateStoreItemException, TryingToGivePriceOfItemWhichIDNotExistException, TryingToGiveDiffrentPricesForSameStoreItemException {
+    public Map<Integer, Item> getItems()
+    {
+        return items;
+    }
+
+    public void updateStoresAndItems(String stPath) throws FileNotFoundException, JAXBException, FileNotEndWithXMLException, DuplicateItemException, LocationIsOutOfBorderException, DuplicateStoreIDException, DuplicateStoreItemException, TryingToGivePriceOfItemWhichIDNotExistException, TryingToGiveDifferentPricesForSameStoreItemException {
         SuperDuperMarketDescriptor sdmDescriptor=this.fromStringPathToDescriptor(stPath);
         parseFromSDMItemToItem(sdmDescriptor);
         parseFromSDMStoresToStores(sdmDescriptor);
     }
-
     private SuperDuperMarketDescriptor fromStringPathToDescriptor(String inpPath) throws FileNotFoundException, JAXBException, FileNotEndWithXMLException
     {
         File inputFile = new File(inpPath);
@@ -49,27 +54,18 @@ public class XMLHandlerBaseOnSchema
         }
 
         InputStream inputStream = new FileInputStream(new File(inpPath));
-        SuperDuperMarketDescriptor sdmObj = deserialize(inputStream);
-        return (sdmObj);
+        return (deserialize(inputStream));
 
     }
 
     //deserialize from input to SuperDuperMarket
+
     private SuperDuperMarketDescriptor deserialize(InputStream in)throws JAXBException
     {
+        String JAXB_XML_PACKAGE_NAME = "SDM.jaxb.schema.generated";
         JAXBContext jc= JAXBContext.newInstance(JAXB_XML_PACKAGE_NAME);
         Unmarshaller u=jc.createUnmarshaller();
         return (SuperDuperMarketDescriptor) u.unmarshal(in);
-    }
-
-    public List<Store> getStores()
-    {
-        return stores;
-    }
-
-    public Map<Integer, Item> getItems()
-    {
-        return items;
     }
 
     private void parseFromSDMItemToItem(SuperDuperMarketDescriptor sdmObj) throws DuplicateItemException
@@ -91,7 +87,7 @@ public class XMLHandlerBaseOnSchema
     }
 
 
-    private void parseFromSDMStoresToStores(SuperDuperMarketDescriptor sdmObj) throws DuplicateStoreIDException, DuplicateStoreItemException, LocationIsOutOfBorderException, TryingToGivePriceOfItemWhichIDNotExistException, TryingToGiveDiffrentPricesForSameStoreItemException {
+    private void parseFromSDMStoresToStores(SuperDuperMarketDescriptor sdmObj) throws DuplicateStoreIDException, DuplicateStoreItemException, LocationIsOutOfBorderException, TryingToGivePriceOfItemWhichIDNotExistException, TryingToGiveDifferentPricesForSameStoreItemException {
         List<SDMStore> sdmStores=  sdmObj.getSDMStores().getSDMStore();
         this.stores=new ArrayList<>();
         Store st;
@@ -120,21 +116,14 @@ public class XMLHandlerBaseOnSchema
             }
             
             st.setLocation(new Location(new Point(sdmSt.getLocation().getX(),sdmSt.getLocation().getY())));
-            Map<Integer,StoreItem> itemsInStStore= this.getStorItemesFromsdmPrices(sdmSt,st);
+            Map<Integer,StoreItem> itemsInStStore= this.getStoreItemesFromsdmPrices(sdmSt,st);
             st.setItemsThatSellInThisStore(itemsInStStore);
             this.stores.add(st);
         }
     }
-/*
-    private boolean checkIfIsLegalLocation(int x, int y)
-    {
-        return((x>=Location.minBorder&&x<=Location.maxBorder) && (y>=Location.minBorder&&y<=Location.maxBorder));
-    }
-
- */
 
     //convert sdmPrices to storeItem
-    private Map<Integer, StoreItem> getStorItemesFromsdmPrices(SDMStore sdmSt, Store st) throws DuplicateStoreItemException, TryingToGivePriceOfItemWhichIDNotExistException, TryingToGiveDiffrentPricesForSameStoreItemException {
+    private Map<Integer, StoreItem> getStoreItemesFromsdmPrices(SDMStore sdmSt, Store st) throws DuplicateStoreItemException, TryingToGivePriceOfItemWhichIDNotExistException, TryingToGiveDifferentPricesForSameStoreItemException {
         List<SDMSell> listSDMSell =sdmSt.getSDMPrices().getSDMSell();
         Map<Integer,StoreItem> retMapStoreItems=new HashMap<>();
         StoreItem sti;
@@ -145,15 +134,12 @@ public class XMLHandlerBaseOnSchema
             {
                throw (new DuplicateStoreItemException(sdmSell.getItemId()));
             }
-            
-
-            //////NOY HADASH
             if(this.items.containsKey(sdmSell.getItemId()))
             {
                 sti=new StoreItem();
                 if (sti.getPrice()!=0)
                 {
-                    throw (new TryingToGiveDiffrentPricesForSameStoreItemException(st.getId()));
+                    throw (new TryingToGiveDifferentPricesForSameStoreItemException(st.getId()));
                 }
                 sti.setPrice(sdmSell.getPrice());
                 sti.setStore(st);
@@ -165,9 +151,4 @@ public class XMLHandlerBaseOnSchema
         }
         return (retMapStoreItems);
     }
-
-
-
-
-
 }

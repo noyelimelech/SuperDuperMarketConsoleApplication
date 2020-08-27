@@ -2,7 +2,7 @@ package SDM.Exception;
 
 public class ItemNoOneSellException extends Exception {
 
-    private int Id;
+    private final int Id;
 
     public ItemNoOneSellException(int id) {
         Id = id;

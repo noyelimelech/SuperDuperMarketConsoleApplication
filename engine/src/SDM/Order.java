@@ -7,12 +7,12 @@ import java.util.*;
 public class Order
 {
     private static int idCounter = 1;
-    private int id;
-    private Map<Integer, OrderItem> orderItemCart;
-    private Store storeOrderMadeFrom;
-    private Costumer costumer;
-    private Date date;
-    private double deliveryPrice;
+    private final int id;
+    private final Map<Integer, OrderItem> orderItemCart;
+    private final Store storeOrderMadeFrom;
+    private final Costumer costumer;
+    private final Date date;
+    private final double deliveryPrice;
     private double priceOfAllItems;
     private double totalPrice;
 
@@ -88,6 +88,7 @@ public class Order
                 orderItem.clearAmount();
             }
         });
+        costumer.addNewOrder(this);
         storeOrderMadeFrom.getOrders().add(this);
     }
 
@@ -99,21 +100,12 @@ public class Order
         return Location.distanceBetweenLocations(costumer.getLocation(), storeOrderMadeFrom.getLocation());
     }
 
-    //Noy's job
     public int getTotalItemsInOrder()
     {
         int totalItems=0;
 
-        /*
-        for (OrderItem orderitem:orderItemCart.values())
-        {
-
-         */
-
         for (Map.Entry<Integer, OrderItem> iterator : orderItemCart.entrySet())
         {
-
-            Integer key = iterator.getKey();
             OrderItem orderItem = iterator.getValue();
             Item.ItemType type=orderItem.getItemInOrder().getItem().getType();
 

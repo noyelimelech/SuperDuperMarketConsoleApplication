@@ -2,7 +2,7 @@ package SDM.Exception;
 
 public class DuplicateStoreIDException extends Exception
 {
-    private int id;
+    private final int id;
 
     public DuplicateStoreIDException(int id)
     {

@@ -8,7 +8,7 @@ public class Location
     public static final int minBorder=1;
     public static int maxBorder=50;
 
-    private Point location;
+    private final Point location;
 
     public Location(Point p)
     {

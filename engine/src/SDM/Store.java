@@ -1,8 +1,5 @@
 package SDM;
 
-import SDM.Location;
-import SDM.Order;
-
 import java.util.*;
 
 public class Store implements Locatable
