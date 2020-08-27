@@ -14,7 +14,7 @@ public class SDMEngine {
     private final Map<Integer, Costumer> allCostumers = new HashMap<>();
     private List<Order> allOrders;
     private Order currentOrder;
-    private final Map<Integer, StoreItem> allStoreItemsWithPriceForSpecificStore = new HashMap<>(); //private Map for storeItems to show to UI
+    private Map<Integer, StoreItem> allStoreItemsWithPriceForSpecificStore = new HashMap<>(); //private Map for storeItems to show to UI
     private boolean xmlFileLoaded = false;
 
     public Map<Integer, Store> getAllStoresMap() {
@@ -126,6 +126,8 @@ public class SDMEngine {
     }
 
     public void updateAllStoreItemsForSaleInCurrentStoreOrder(Store store) {
+        allStoreItemsWithPriceForSpecificStore = new HashMap<>();
+
         for (Item item : allItems.values()) {
             StoreItem storeItem = new StoreItem();
             storeItem.setItem(item);
