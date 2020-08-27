@@ -2,8 +2,8 @@ package SDM.Exception;
 
 public class NegativeAmountOfItemInException extends Exception{
 
-    private String currentAmount;
-    private String amountTriedToAdd;
+    private final String currentAmount;
+    private final String amountTriedToAdd;
 
     public NegativeAmountOfItemInException(String currentAmount, String amountTriedToAdd) {
         this.currentAmount = currentAmount;

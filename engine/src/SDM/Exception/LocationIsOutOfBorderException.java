@@ -2,10 +2,10 @@ package SDM.Exception;
 
 public class LocationIsOutOfBorderException extends Exception
 {
-    private int minBorder;
-    private int maxBorder;
-    private String locatableType;
-    private int id;
+    private final int minBorder;
+    private final int maxBorder;
+    private final String locatableType;
+    private final int id;
 
     public LocationIsOutOfBorderException(int minBorder, int maxBorder, String locatableType, int id)
     {

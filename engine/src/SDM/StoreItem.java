@@ -1,9 +1,6 @@
 package SDM;
 
 import SDM.Exception.NegativeAmountOfItemInException;
-import SDM.Item;
-import SDM.Store;
-import com.sun.xml.internal.bind.v2.TODO;
 
 public class StoreItem
 {

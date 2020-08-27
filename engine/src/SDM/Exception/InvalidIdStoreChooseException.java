@@ -2,7 +2,7 @@ package SDM.Exception;
 
 public class InvalidIdStoreChooseException extends Exception
 {
-    private int invalidId;
+    private final int invalidId;
 
     public InvalidIdStoreChooseException(int storeId)
     {

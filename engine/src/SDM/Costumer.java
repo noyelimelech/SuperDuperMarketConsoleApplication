@@ -32,8 +32,8 @@ public class Costumer implements  Locatable
         this.name = name;
     }
 
-    public Map<Integer, Order> getHistoryOrders() {
-        return historyOrders;
+    public void addNewOrder(Order newOrder) {
+        historyOrders.put(newOrder.getId(), newOrder);
     }
 
     @Override
