@@ -1,5 +1,6 @@
 package SDM;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Costumer implements  Locatable
@@ -12,7 +13,7 @@ public class Costumer implements  Locatable
     public Costumer(int id, String name, Location location) {
         this.id = id;
         this.name = name;
-        this.historyOrders = null;
+        this.historyOrders = new HashMap<>();
         this.location = location;
     }
 
