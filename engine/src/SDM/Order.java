@@ -29,8 +29,40 @@ public class Order
         return new Order(costumer, date, storeOrderMadeFrom);
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public Map<Integer, OrderItem> getOrderItemCart() {
+        return orderItemCart;
+    }
+
+    public Store getStoreOrderMadeFrom() {
+        return storeOrderMadeFrom;
+    }
+
+    public Costumer getCostumer() {
+        return costumer;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
     public double getDeliveryPrice() {
         return deliveryPrice;
+    }
+
+    public double getPriceOfAllItems() {
+        return priceOfAllItems;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public boolean isEmpty() {
+        return orderItemCart.size() == 0;
     }
 
     public void addItemToOrder(StoreItem itemToAdd, String amountToAdd) throws NegativeAmountOfItemInException {
@@ -67,36 +99,6 @@ public class Order
         return Location.distanceBetweenLocations(costumer.getLocation(), storeOrderMadeFrom.getLocation());
     }
 
-
-    public int getId() {
-        return id;
-    }
-
-    public Map<Integer, OrderItem> getOrderItemCart() {
-        return orderItemCart;
-    }
-
-    public Store getStoreOrderMadeFrom() {
-        return storeOrderMadeFrom;
-    }
-
-    public Costumer getCostumer() {
-        return costumer;
-    }
-
-    public double getPriceOfAllItems() {
-        return priceOfAllItems;
-    }
-
-    public double getTotalPrice() {
-        return totalPrice;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-
     //Noy's job
     public int getTotalItemsInOrder()
     {
@@ -126,9 +128,5 @@ public class Order
             }
         }
         return (totalItems);
-    }
-
-    public boolean isEmpty() {
-        return orderItemCart.size() == 0;
     }
 }

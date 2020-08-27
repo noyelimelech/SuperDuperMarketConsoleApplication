@@ -4,8 +4,6 @@ import SDM.Exception.NegativeAmountOfItemInException;
 
 public abstract class OrderItem {
 
-
-
     public static class Factory {
         public static OrderItem makeNewOrderItem(StoreItem storeItem ) {
             OrderItem newItemOrder;
@@ -32,7 +30,13 @@ public abstract class OrderItem {
         this.itemInOrder = itemInOrder;
     }
 
+    public StoreItem getItemInOrder() {
+        return itemInOrder;
+    }
+
     public abstract double getTotalPrice();
+
+    public abstract String getAmount();
 
     public abstract void clearAmount();
 
@@ -41,10 +45,4 @@ public abstract class OrderItem {
     public abstract void updateItemAmountSold() throws NegativeAmountOfItemInException;
 
     public abstract void updateStoreItemAmountSold() throws NegativeAmountOfItemInException;
-
-    public StoreItem getItemInOrder() {
-        return itemInOrder;
-    }
-
-    public abstract String getAmount();
 }

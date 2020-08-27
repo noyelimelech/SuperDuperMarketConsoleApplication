@@ -2,7 +2,8 @@ package SDM.Exception;
 
 public class TryingToGivePriceOfItemWhichIDNotExistException extends Exception
 {
-    int id;
+    private int id;
+
     public TryingToGivePriceOfItemWhichIDNotExistException(int itemId)
     {
         id=itemId;

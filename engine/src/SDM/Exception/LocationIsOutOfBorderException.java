@@ -20,7 +20,6 @@ public class LocationIsOutOfBorderException extends Exception
         return minBorder;
     }
 
-
     public int getMaxBorder()
     {
         return maxBorder;

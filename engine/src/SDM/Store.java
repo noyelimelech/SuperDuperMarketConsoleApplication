@@ -13,7 +13,7 @@ public class Store implements Locatable
     private int deliveryPPK;
     private Location location;
     private Map<Integer, StoreItem> itemsThatSellInThisStore=new HashMap<>();
-    private List<Order> orders=new LinkedList<Order>();
+    private List<Order> orders= new LinkedList<>();
 
     public int getId()
     {
@@ -75,8 +75,6 @@ public class Store implements Locatable
         this.orders = orders;
     }
 
-
-    //Noy's job--> total amount for delivery
     public double getTotalAmountForDeliveries()
     {
         double retAmountOfDeliveries=0;
@@ -86,8 +84,4 @@ public class Store implements Locatable
         }
         return (retAmountOfDeliveries);
     }
-
-
-
-
 }

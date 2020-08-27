@@ -10,18 +10,23 @@ public class OrderWeightItem extends OrderItem{
         super(itemInOrder);
     }
 
+    public double getWeightOfItem() {
+        return weightOfItem;
+    }
+
     @Override
     public double getTotalPrice() {
         return itemInOrder.getPrice() * weightOfItem;
     }
 
     @Override
-    public void clearAmount() {
-        weightOfItem = 0;
+    public String getAmount() {
+        return String.valueOf(weightOfItem);
     }
 
-    public double getWeightOfItem() {
-        return weightOfItem;
+    @Override
+    public void clearAmount() {
+        weightOfItem = 0;
     }
 
     @Override
@@ -44,10 +49,5 @@ public class OrderWeightItem extends OrderItem{
     @Override
     public void updateStoreItemAmountSold() throws NegativeAmountOfItemInException {
         itemInOrder.addAmountThatSold(weightOfItem);
-    }
-
-    @Override
-    public String getAmount() {
-        return String.valueOf(weightOfItem);
     }
 }

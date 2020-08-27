@@ -1,7 +1,8 @@
 package SDM.Exception;
 
 public class StoreWithNoItemException extends Exception {
-    int Id;
+
+    private int Id;
 
     public StoreWithNoItemException(int id) {
         Id = id;

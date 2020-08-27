@@ -10,6 +10,10 @@ public class OrderQuantityItem extends OrderItem {
         super(itemInOrder);
     }
 
+    public int getQuantity() {
+        return quantity;
+    }
+
     @Override
     public double getTotalPrice() {
         return itemInOrder.getPrice() * quantity;
@@ -18,10 +22,6 @@ public class OrderQuantityItem extends OrderItem {
     @Override
     public void clearAmount() {
         quantity = 0;
-    }
-
-    public int getQuantity() {
-        return quantity;
     }
 
     @Override
